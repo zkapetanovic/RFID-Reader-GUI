@@ -1,13 +1,14 @@
 RFID-Reader-GUI
 ===============
 
-Modify Impinj reader configurations in inventory3.py
 
-updateTagReport.py : Parses the EPCs
+inventory3.py : Set all configurations for the Impinj reader
 
-GUI_Setup : All widgets are initialize here
+updateTagReport.py : Parses the EPCs, formats the sensor data
 
-main.py : starts the applications, controls and updates widgets
+GUI_Setup : All widgets are initialized here
+
+main.py : starts the application, controls and updates widgets
 
 globals.py : all of the main variables are found here
 
