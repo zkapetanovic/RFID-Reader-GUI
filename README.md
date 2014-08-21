@@ -1,6 +1,7 @@
 RFID-Reader-GUI
 ===============
 
+Run main.py to start the application
 
 inventory3.py : Set all configurations for the Impinj reader
 
