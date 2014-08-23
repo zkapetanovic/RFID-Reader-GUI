@@ -1,15 +1,18 @@
 RFID-Reader-GUI
 ===============
 
-Run main.py to start the application
+1. Instalations:
+      - Qt 4.8.7
+      - PyQt4
+      - SIP (latest)
+      - matplotlib
+      - numpy
+2. Run main.py to start the application
 
-inventory3.py : Set all configurations for the Impinj reader
 
-updateTagReport.py : Parses the EPCs, formats the sensor data
-
-GUI_Setup : All widgets are initialized here
-
-main.py : starts the application, controls and updates widgets
-
-globals.py : all of the main variables are found here
+Details:
+  - To modify the Impinj reader configurations go to inventory3.py. All configuration settings are in the readerConfig class.
+  - updateTagReport.py : Parses the EPCs, formats the sensor data
+  - GUI_Setup.py : All widgets are initalized here
+  - globals.py : All of the main variables are found here
 
