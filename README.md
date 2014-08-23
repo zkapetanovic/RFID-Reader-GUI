@@ -1,7 +1,7 @@
 RFID-Reader-GUI
 ===============
 
-1. Instalations:
+1. Installations:
       - Qt 4.8.7
       - PyQt4
       - SIP (latest)
