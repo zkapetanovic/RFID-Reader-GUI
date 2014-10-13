@@ -12,7 +12,7 @@ from sllurp.llrp_proto import LLRPROSpec, ModeIndex_Name2Type
 from twisted.internet import reactor
 
 from updateTagReport import UpdateTagReport
-import globals 
+import globals
 
 tagsSeen = 0
 logger = logging.getLogger('sllurp')
@@ -22,7 +22,7 @@ logger = logging.getLogger('sllurp')
 class readerConfig:
 	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, duration = float(80),
 				 every_n = 1, antennas = '1', standalone = True,
-				 tx_power = 31, modulation = 'M4', reconnect = True,
+				 tx_power = 31, modulation = 'WISP5', reconnect = True,
 				 tari = '0', logfile = 'logfile.log', debug = True):
 
 		self.host 		= globals.host
@@ -68,6 +68,7 @@ class Reader(threading.Thread):
 				tagReport.parseData(epc, rssi, snr, time)
 
 	    else:
+	    	globals.tmp = "N/A"
 	        logger.info('no tags seen')
 	        return
 	   
@@ -81,7 +82,6 @@ class Reader(threading.Thread):
 		fHandler.setFormatter(formatter)
 		logger.addHandler(fHandler)
 		enabled_antennas = map(lambda x: int(x.strip()), args.antennas.split(','))
-		print (args.host)
 		self.reader = llrp.LLRPReaderThread(args.host,
 								  llrp.LLRP_PORT,
 								  duration = args.duration,

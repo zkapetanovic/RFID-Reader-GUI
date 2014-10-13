@@ -5,6 +5,7 @@ global tmp, tagType, hwVersion, snr, wispID, idEntry, data, newRow, plotData, rr
 
 host 		= "N/A"				#IP address for sllurp
 tmp 		= "N/A"
+camInfo		= "N/A"
 tagType 	= "N/A"
 hwVersion 	= "N/A"
 snr 		= "N/A"
@@ -27,12 +28,19 @@ plotData 	= [] 				#plot temperature data
 imArray		= [128 for x in range(25200)]
 entry 		= ()
 saturn 		= False
+
+#Camera
 x 			= 0
 y 			= 255
 currSeq = 0 					#current EPC sequence
 prevSeq = 0 					#previous EPC sequence
 sequence = 0 					#counter for the number of EPC sequences
 count 	= 0
+begin = 4
+end = begin + 2
+dataCount = 0
+capturing = 0
+
 
 acX = 0
 acY = 0

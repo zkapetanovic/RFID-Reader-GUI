@@ -142,7 +142,8 @@ class RFID_Reader_App:
 			#tag.y = str("%s" % wispApp.xVal.toPlainText())
 			tag.x = 0
 			tag.y = 20
-			if int(tag.tmp[2:4], 16) == 255:
+			if tag.count >= 2500 or int(tag.tmp[2:4], 16) == 255:
+
 				#print "capture image"		
 				#camera_image = np.loadtxt(r'CAMERA.txt')
 				#raw_image = camera_image[0:25200]
@@ -151,22 +152,17 @@ class RFID_Reader_App:
 					if i <= tag.x: 	i = 0
 					elif i > tag.y: i = 255
 
-
-
+				plt.cla()
+				plt.clf()
 				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
 				#print mat_image
-				plt.gray()
+				plt.gray()			
 				image = wispApp.image.add_subplot(111)
 				image.clear()
 				image.imshow(mat_image)
 				wispApp.imageCanvas.draw()
-
-				time.sleep(5)
-				tag.imArray	= [128 for x in range(25200)]
-				image.clear()
-				#tag.sequence = 0
-				#tag.currSeq = 0
-				#tag.prevSeq = 0
+				print ("Image Displayed")
+				
 
 
 def main():

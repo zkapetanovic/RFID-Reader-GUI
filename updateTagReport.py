@@ -2,16 +2,9 @@
 
 from localization import Localization
 import globals as tag
-count = 0
+
 
 class UpdateTagReport:
-	def __init__(self):
-		'''Variables used for image capture '''
-
-		self.begin = 4 						#start for parsing EPC 
-		self.end = self.begin + 2 			#end for parsing EPC
-
-	#switched wispID and tagType
 	def parseData(self, epc, rssi, snr, time):
 		tag.epc 			= epc	
 		tag.tmp 			= "%02X" % int(epc[0:24], 16)
@@ -21,6 +14,7 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
+
 
 	
 		if tag.hwVersion is None:
@@ -40,7 +34,6 @@ class UpdateTagReport:
 
 		#Temperature WISP
 		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
-
 		#Localization
 		elif tag.tagType == "B7": 
 			if tag.wispID not in tag.lTags.keys():
@@ -49,13 +42,15 @@ class UpdateTagReport:
 			self.localization()
 
 		#Camera
-		elif tag.tagType == "CA": self.imageCapture()
+		elif tag.tagType == "CA": 
+			tag.capturing = 1
+			self.imageCapture()
 
 		#Unknown tag type
 		else:
 			tag.sensorData = "N/A"
+			tag.camInfo = 0
 			self.updateEntry()
-
 
 	def accelerometer(self, alpha):
 		percentage = alpha * 100 / 1024.
@@ -98,12 +93,15 @@ class UpdateTagReport:
 			tag.sequence 	= 0
 			tag.currSeq 	= 0
 			tag.prevSeq 	= 0
+			tag.count 		= 0
 			return
 
 		if tag.currSeq < tag.prevSeq:
 			tag.sequence += 1
 		print "count, sequence"
 		print tag.count, tag.sequence
+
+		#tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + tag.dataCount] = int(tag.epc[tag.begin:tag.end])
 		tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)
 		tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 1] = int(tag.epc[6:8], 16)
 		tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 2] = int(tag.epc[8:10], 16)
