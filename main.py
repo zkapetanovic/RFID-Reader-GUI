@@ -19,7 +19,7 @@ import sys, threading, time
 import pkg_resources
 
 from GUI_Setup import GUI_Setup
-from inventory3 import Reader
+from inventory import Reader
 from updateTagReport import UpdateTagReport
 from localizationPlotting import LocalizationPlotting
 from saturn import SaturnDemo
