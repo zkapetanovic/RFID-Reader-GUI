@@ -2,8 +2,13 @@
 
 
 import globals as tag
+<<<<<<< HEAD
 import time
 
+=======
+
+
+>>>>>>> FETCH_HEAD
 class UpdateTagReport:
 	def parseData(self, epc, rssi, snr, time):
 		tag.epc 			= epc	
@@ -34,9 +39,22 @@ class UpdateTagReport:
 
 		#Temperature WISP
 		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
+<<<<<<< HEAD
 
 		#Camera
 		elif tag.tagType == "CA": 
+=======
+		#Localization
+		elif tag.tagType == "B7": 
+			if tag.wispID not in tag.lTags.keys():
+				tag.lTags[tag.wispID] = tag.lnewRow
+				tag.lnewRow += 1
+			self.localization()
+
+		#Camera
+		elif tag.tagType == "CA": 
+			tag.capturing = 1
+>>>>>>> FETCH_HEAD
 			self.imageCapture()
 
 		#Unknown tag type
@@ -83,7 +101,12 @@ class UpdateTagReport:
 
 		if tag.currSeq < tag.prevSeq:
 			tag.sequence += 1
+<<<<<<< HEAD
 
+=======
+		print "count, sequence"
+		print tag.count, tag.sequence
+>>>>>>> FETCH_HEAD
 
 		#tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + tag.dataCount] = int(tag.epc[tag.begin:tag.end])
 		tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)

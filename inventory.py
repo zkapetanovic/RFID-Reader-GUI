@@ -21,7 +21,11 @@ args = None
 
 class readerConfig:
 	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, time = float(80),
+<<<<<<< HEAD
 				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'WISP5',
+=======
+				 debug = True, every_n = 1, antennas = '1', tx_power = 31, modulation = 'WISP5',
+>>>>>>> FETCH_HEAD
 				 tari = 25, reconnect = True, logfile = 'logfile.log'):
 
 		self.host 		= globals.host
@@ -37,13 +41,20 @@ class readerConfig:
 		self.logfile	= logfile
 
 		
+<<<<<<< HEAD
 class Reader(threading.Thread):
+=======
+class Reader(threading.thread):
+>>>>>>> FETCH_HEAD
 	def __init__(self):
 		threading.Thread.__init__(self)
 		impinj = reactor
 		self.impinj  = impinj
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> FETCH_HEAD
 	def run(self):
 		self.initReader()
 		
@@ -62,6 +73,7 @@ class Reader(threading.Thread):
 		if len(tags):
 			logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))
 
+<<<<<<< HEAD
 			for tag in tags:
 				tagsSeen += tag['TagSeenCount'][0]
 				epc 		 = tag['EPC-96']
@@ -71,6 +83,17 @@ class Reader(threading.Thread):
 
 				tagReport = UpdateTagReport()
 				tagReport.parseData(epc, rssi, snr, time)
+=======
+				for tag in tags:
+					tagsSeen += tag['TagSeenCount'][0]
+					epc 		 = tag['EPC-96']
+					rssi 		 = tag['PeakRSSI'][0]
+					time 		 = tag['LastSeenTimestampUTC'][0]
+					snr 		 = "N/A"
+
+					tagReport = UpdateTagReport()
+					tagReport.parseData(epc, rssi, snr, time)
+>>>>>>> FETCH_HEAD
 
 			else:
 				globals.tmp = "N/A"
@@ -85,7 +108,11 @@ class Reader(threading.Thread):
 
 		enabled_antennas = map(lambda x: int(x.strip()), args.antennas.split(','))
 
+<<<<<<< HEAD
 		self.factory = llrp.LLRPClientFactory(duration = args.time,
+=======
+		fac = llrp.LLRPClientFactory(duration = args.time,
+>>>>>>> FETCH_HEAD
 									 report_every_n_tags = args.every_n,
 									 antennas = enabled_antennas,
 									 tx_power = args.tx_power,
@@ -95,15 +122,22 @@ class Reader(threading.Thread):
 									 disconnect_when_done = (args.time > 0),
 									 reconnect = args.reconnect,
 									 tag_content_selector = {
+<<<<<<< HEAD
 										'EnableROSpecID' : True,
 										'EnableSpecIndex' : True,
 										'EnableInventoryParameterSpecID' : True,
+=======
+										'EnableROSpecID' : False,
+										'EnableSpecIndex' : False,
+										'EnableInventoryParameterSpecID' : False,
+>>>>>>> FETCH_HEAD
 										'EnableAntennaID' : True,
 										'EnableChannelIndex' : False,
 										'EnablePeakRRSI' : True,
 										'EnableFirstSeenTimestamp' : False,
 										'EnableLastSeenTimestamp' : True,
 										'EnableTagSeenCount' : True,
+<<<<<<< HEAD
 										'EnableAccessSpecID' : True 
 									 })
 
@@ -111,5 +145,14 @@ class Reader(threading.Thread):
 		self.factory.addTagReportCallback(self.tagReportCallback)
 		reactor.connectTCP(args.host, args.port, self.factory)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
+=======
+										'EnableAccessSpecID' : False 
+									 })
+
+
+		fac.addTagReportCallback(self.tagReportCallback)
+		reactor.connectTCP(args.host, args.port, fac)
+		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, fac)
+>>>>>>> FETCH_HEAD
 		reactor.run()
 
