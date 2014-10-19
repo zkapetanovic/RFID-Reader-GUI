@@ -19,26 +19,30 @@ import sys, threading, time
 import pkg_resources
 
 from GUI_Setup import GUI_Setup
-from inventory3 import Reader
+from inventory import Reader
 from updateTagReport import UpdateTagReport
-from localizationPlotting import LocalizationPlotting
 from saturn import SaturnDemo
-
 import globals as tag
 
 
 class RFID_Reader_App:
 	def __init__(self):
+
+		self.impinjThread = Reader()
+		self.saturnThread = SaturnDemo()
 		self.usrpStart = False
 		self.impinjStart = False
-		self.runStarted = False
+
+		self.runStarted = 0
+		self.pause = 0
 
 		wispApp.startButton.clicked.connect(self.start)
 		wispApp.stopButton.clicked.connect(self.stop)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
-		wispApp.local3DButton.clicked.connect(self.initLocalization)
 		wispApp.captureButton.clicked.connect(self.captureImage)
+		wispApp.pauseButton.clicked.connect(self.pauseRun)
+		wispApp.clearButton.clicked.connect(self.clearTable)
 
 
 	def readerSelect(self):
@@ -51,14 +55,19 @@ class RFID_Reader_App:
 
 
 	def start(self):
-		self.runStarted = True
-		self.timer = QtCore.QTimer()
-		self.timer.timeout.connect(self.updateGUI)
-		self.timer.timeout.connect(self.captureImage)
-		self.timer.timeout.connect(self.updateTemp)
-		self.timer.timeout.connect(self.updateAccel)
-		self.timer.start(100)
-		self.initReader()
+		if self.runStarted == 0:
+			self.runStarted = 1
+			self.timer = QtCore.QTimer()
+			self.timer.timeout.connect(self.updateGUI)
+			self.timer.timeout.connect(self.captureImage)
+			self.timer.timeout.connect(self.updateTemp)
+			self.timer.timeout.connect(self.updateAccel)
+			self.timer.start(100)
+			self.initReader()
+
+		if self.pause == 1:
+			self.impinjThread.factory.resumeInventory()
+			self.pause = 0
 
 
 	def stop(self):
@@ -66,10 +75,22 @@ class RFID_Reader_App:
 		self.timer.stop()
 
 
+	def pauseRun(self):
+		self.impinjThread.factory.pauseInventory()
+		self.pause = 1
+
+	def clearTable(self):
+		tag.data = []
+		tag.idEntry = []
+		tag.newRow = 0
+		tag.entryCount = 0
+		wispApp.mainTable.clearContents()		
+
+
 	def initReader(self):
 		if self.impinjStart == True:
-			global impinjThread
-			self.impinjThread = Reader()
+			#global impinjThread
+			#self.impinjThread = Reader()
 			self.impinjThread.daemon = True
 			self.impinjThread.start()
 		elif self.usrpStart == True:
@@ -79,7 +100,7 @@ class RFID_Reader_App:
 
 
 	def initSaturn(self):
-		self.saturnThread = SaturnDemo()
+		#self.saturnThread = SaturnDemo()
 		self.saturnThread.daemon = True
 		self.saturnThread.start()
 		tag.saturn = True
@@ -134,39 +155,34 @@ class RFID_Reader_App:
 
 
 	def captureImage(self):
+		tag.x = str("%s" % wispApp.xVal.toPlainText())
+		tag.y = str("%s" % wispApp.yVal.toPlainText())
 		if tag.tagType == "CA":
+			wispApp.statusLabel.setText("<b>Status</b>: Transmitting image data")
 			rows 	= 144
 			columns = 175
 
-			#tag.x = str("%s" % wispApp.xVal.toPlainText())
-			#tag.y = str("%s" % wispApp.xVal.toPlainText())
-			tag.x = 0
-			tag.y = 20
-			if int(tag.tmp[2:4], 16) == 255:
-				#print "capture image"		
-				#camera_image = np.loadtxt(r'CAMERA.txt')
-				#raw_image = camera_image[0:25200]
+			tag.x = str("%s" % wispApp.xVal.toPlainText())
+			tag.y = str("%s" % wispApp.xVal.toPlainText())
 			
+			if tag.count >= 25400 or int(tag.epc[2:4], 16) == 255:		
+				wispApp.statusLabel.setText("Status: Image captured")
 				for i in tag.imArray:
 					if i <= tag.x: 	i = 0
 					elif i > tag.y: i = 255
 
-
-
+				plt.cla()
+				plt.clf()
 				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
-				#print mat_image
-				plt.gray()
+				plt.gray()			
 				image = wispApp.image.add_subplot(111)
 				image.clear()
+				ax = wispApp.image.gca()
+				ax.set_axis_off()
 				image.imshow(mat_image)
 				wispApp.imageCanvas.draw()
 
-				time.sleep(5)
-				tag.imArray	= [128 for x in range(25200)]
-				image.clear()
-				#tag.sequence = 0
-				#tag.currSeq = 0
-				#tag.prevSeq = 0
+				
 
 
 def main():

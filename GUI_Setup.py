@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-
 from PyQt4 import QtGui, Qt, QtCore
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -27,68 +25,24 @@ class GUI_Setup(QtGui.QMainWindow):
 
 		#### Buttons ####
 		self.startButton = QtGui.QPushButton('Start', self)
-		self.startButton.setGeometry(30, 460, 100, 30)
+		self.startButton.setObjectName("Start")
+		self.startButton.setGeometry(30, 470, 100, 30)
 
 		self.stopButton = QtGui.QPushButton('Stop', self)
-		self.stopButton.setGeometry(140, 460, 100, 30)
+		self.stopButton.setObjectName("Stop")
+		self.stopButton.setGeometry(140, 470, 100, 30)
+
+		self.pauseButton = QtGui.QPushButton('Pause', self)
+		self.pauseButton.setObjectName("Pause")
+		self.pauseButton.setGeometry(250, 470, 100, 30)
+
+		self.clearButton = QtGui.QPushButton('Clear Table', self)
+		self.clearButton.setObjectName("Clear")
+		self.clearButton.setGeometry(360, 470, 120, 30)
 
 		self.saturnButton = QtGui.QPushButton('Saturn', self)
-		self.saturnButton.setGeometry(250, 460, 100, 30)
-
-		self.local3DButton = QtGui.QPushButton('Localization', self)
-		self.local3DButton.setGeometry(360, 460, 140, 30)
-
-		#### Localization ####
-		self.numPoints = QtGui.QComboBox(self)
-		self.numPoints.setEditable(False)
-		self.numPoints.addItem('2')
-		self.numPoints.addItem('3')
-		self.numPoints.addItem('4')
-
-		self.ch1Label = QtGui.QLabel("Channel 1:", self)
-		self.ch1Label.setFont(QFont('Arial', 10))
-
-		self.ch2Label = QtGui.QLabel("Channel 2:", self)
-		self.ch2Label.setFont(QFont('Arial', 10))
-
-		self.ch3Label = QtGui.QLabel("Channel 3:", self)
-		self.ch3Label.setFont(QFont('Arial', 10))
-
-		self.ch4Label = QtGui.QLabel("Channel 4:", self)
-		self.ch4Label.setFont(QFont('Arial', 10))
-
-		self.ch1 = QtGui.QTextEdit(self)
-		self.ch1.setFixedHeight(25)
-		self.ch1.setFixedWidth(60)
-		self.ch1.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch2 = QtGui.QTextEdit(self)
-		self.ch2.setFixedHeight(25)
-		self.ch2.setFixedWidth(60)
-		self.ch2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch3 = QtGui.QTextEdit(self)
-		self.ch3.setFixedHeight(25)
-		self.ch3.setFixedWidth(60)
-		self.ch3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch4 = QtGui.QTextEdit(self)
-		self.ch4.setFixedHeight(25)
-		self.ch4.setFixedWidth(60)
-		self.ch4.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.pointsLabel = QtGui.QLabel("Select Number of Points:", self)
-		self.pointsLabel.setFont(QFont('Arial', 10))
-
-		self.chanLabel = QtGui.QLabel("Channel Coordinates (x, y, z):", self)
-		self.chanLabel.setFont(QFont('Arial', 10))
-
-		self.localTable = QtGui.QTableWidget(0, 2, self)
-		self.localTable.setFont(QFont('Courier New', 10))
-		self.localTable.horizontalHeader().setStretchLastSection(True)
-		self.localTable.setHorizontalHeaderLabels(('WISP ID', 'Localization (x, y, z)'))
-		self.localTable.setFixedWidth(432)
-
+		self.saturnButton.setObjectName("Saturn")
+		self.saturnButton.setGeometry(490, 470, 100, 30)
 
 		#### Accelerometer ####
 		self.xAccel = QtGui.QLabel(self)
@@ -111,8 +65,9 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.yVal.setFixedHeight(25)
 		self.yVal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 		
-		self.xLabel = QtGui.QLabel("    X-Value (0 - 255):       ")
-		self.yLabel = QtGui.QLabel("    Y-Value (0 - 255):       ")
+		self.xLabel = QtGui.QLabel("    <b>X-Value</b> (0 - 255):       ")
+		self.yLabel = QtGui.QLabel("    <b>Y-Value</b> (0 - 255):       ")
+		self.statusLabel = QtGui.QLabel("<b>Status</b>: Tag not seen")
 
 		self.captureButton = QtGui.QPushButton("Enter Values")
 		self.captureButton.setFixedHeight(30)
@@ -128,7 +83,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.readerFrame.setLineWidth(4)
 		self.readerFrame.setGeometry(10, 22, 700, 90)
 		
-		self.readerLabel = QtGui.QLabel("Reader Select:", self)
+		self.readerLabel = QtGui.QLabel("<b>Reader Select</b>:", self)
 		self.readerLabel.setGeometry(10, 3, 110, 20)
 		self.readerLabel.setFont(QFont('Arial', 12))
 		
@@ -167,24 +122,9 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.imageLayout.addWidget(self.xVal, 1, 4)
 		self.imageLayout.addWidget(self.yLabel, 2, 0)
 		self.imageLayout.addWidget(self.yVal, 2, 4)
+		self.imageLayout.addWidget(self.statusLabel, 4, 0)
 		self.imageLayout.addWidget(self.captureButton, 3, 4)
 		self.imageLayout.addWidget(self.imageCanvas, 5, 0, 5, 5)
-
-		#Localization
-		localLayout = QtGui.QGridLayout()
-		localLayout.setRowMinimumHeight(0, 20)
-		localLayout.addWidget(self.pointsLabel, 0, 0)
-		localLayout.addWidget(self.numPoints, 0, 1)
-		localLayout.addWidget(self.chanLabel, 1, 0)
-		localLayout.addWidget(self.ch1Label, 2, 0)
-		localLayout.addWidget(self.ch2Label, 3, 0)
-		localLayout.addWidget(self.ch3Label, 4, 0)
-		localLayout.addWidget(self.ch4Label, 5, 0)
-		localLayout.addWidget(self.ch1, 2, 1)
-		localLayout.addWidget(self.ch2, 3, 1)
-		localLayout.addWidget(self.ch3, 4, 1)
-		localLayout.addWidget(self.ch4, 5, 1)
-		localLayout.addWidget(self.localTable, 6, 0)
 		
 		#Temperature
 		self.tempLayout = QtGui.QGridLayout()
@@ -203,29 +143,27 @@ class GUI_Setup(QtGui.QMainWindow):
 		tabFrame = QtGui.QFrame(self)
 		tabFrame.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
 		tabFrame.setLineWidth(4)
-		tabFrame.setGeometry(720, 30, 460, 465)		
+		tabFrame.setGeometry(720, 30, 450, 485)		
 		
 		tabs = QtGui.QTabWidget(self)
-		tabs.resize(450, 480)
+		tabs.resize(450, 500)
 		tabs.move(720, 10)
 			
 		accelTab = QtGui.QWidget()
 		tempTab = QtGui.QWidget()
-		localTab = QtGui.QWidget()
 		imageTab = QtGui.QWidget()
 
-		tabs.addTab(localTab, "Localization")
+		tabs.addTab(imageTab, "Image Capture")
 		tabs.addTab(accelTab, "Accelerometer")
 		tabs.addTab(tempTab, "Temperature")
-		tabs.addTab(imageTab, "Image Capture")
-
+		
 		accelTab.setLayout(accelLayout)
 		tempTab.setLayout(self.tempLayout)
-		localTab.setLayout(localLayout)
 		imageTab.setLayout(self.imageLayout)
 		
 		########## Stylesheet ##########
 		Stylesheet = """
+		QMainWindow {border: 2px solid #262323;}
 		QPushButton {border: 1px solid black; border-radius: 6px;}
 		QPushButton#Stop {border: 1px solid #F21B34; border-radius: 6px;}
 		QPushButton#Start {border: 1px solid #5BD463; border-radius: 6px;}
