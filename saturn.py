@@ -52,6 +52,7 @@ class SaturnDemo(threading.Thread):
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
+
 		#Planet
 		glGenTextures(4, texture)
 		glBindTexture(GL_TEXTURE_2D, texture[0])
@@ -112,21 +113,21 @@ class SaturnDemo(threading.Thread):
 
 
 	def setAngles (self, x, y, z):
-		if x != self.angleX or y != self.angleY or self.angleZ != z:
-			self.angleX = x
-			self.angleY = y
-			self.angleZ = z
+		#if x != self.angleX or y != self.angleY or self.angleZ != z:
+			#self.angleX = x
+			#self.angleY = y
+			#self.angleZ = z
 
-			xAccel = self.angleX - 50
-			yAccel = self.angleY - 50
-			zAccel = self.angleZ - 50
+		xAccel = x - 50
+		yAccel = y - 50
+		zAccel = z - 50
 
 		if zAccel != 0.0:
-			senseAngleX = (180. / 3.14159) * math.atan(xAccel / zAccel)
-			senseAngleY = math.sin(zAccel) * (180. / 3.14159) * math.atan(yAccel / zAccel)
+			senseAngleX = float((180. / 3.14149) * math.atan(xAccel / zAccel))
+			senseAngleY = float(math.sin(zAccel) * (180. / 3.14149) * math.atan(yAccel / zAccel))
 
-			self.angleX = senseAngleX - self.viewAngleX
-			self.angleY = senseAngleY - self.viewAngleY
+		self.angleX = senseAngleX - self.viewAngleX
+		self.angleY = senseAngleY - self.viewAngleY
 
 	def render(self):
 		glClearColor(0, 0, 0, 1)
@@ -135,8 +136,11 @@ class SaturnDemo(threading.Thread):
 		glPushMatrix()
 
 		#Rotate
-		glRotatef(self.angleX, 1, 0 ,0)
-		glRotatef(self.angleY, 0, 1, 0)
+		glTranslatef(0.0, 0.0, 0.0)
+		glRotatef(self.angleX, 1.0, 0.0 ,0.0)
+		glTranslatef(0.0, 0.0, 0.0)
+		glRotatef(self.angleY, 0.0, 1.0, 0.0)
+		glTranslatef(0.0, 0.0, 0.0)
 
 		#Draw planet
 		glBindTexture(GL_TEXTURE_2D, texture[0])

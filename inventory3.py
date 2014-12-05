@@ -22,11 +22,15 @@ logger = logging.getLogger('sllurp')
 class readerConfig:
 	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, duration = float(80),
 				 every_n = 1, antennas = '1', standalone = True,
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 				 tx_power = 61, modulation = 'WISP5', reconnect = True,
 =======
 				 tx_power = 31, modulation = 'WISP5', reconnect = True,
 >>>>>>> FETCH_HEAD
+=======
+				 tx_power = 61, modulation = 'WISP5', reconnect = True,
+>>>>>>> Stashed changes
 				 tari = '0', logfile = 'logfile.log', debug = True):
 
 		self.host 		= globals.host
