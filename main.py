@@ -191,7 +191,7 @@ class RFID_Reader_App:
 				np.savetxt(fileHandle, tag.imArray, '%10s')
 				fileHandle.close()
 				tag.fileCount += 1
-				print name
+				#print name
 				time.sleep(3)
 
 

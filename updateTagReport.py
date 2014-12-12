@@ -104,15 +104,15 @@ class UpdateTagReport:
 			if x == 9:
 				x = 0
 
-		if tag.currSeq == 255: #and count?
-			for i in range(tag.imArray.length):
-				if tag.imArray[i] == 'invalid':
-					tag.missingData.append(i)
+		#if tag.currSeq == 255: #and count?
+		#	for i in range(tag.imArray.length):
+		#		if tag.imArray[i] == 'invalid':
+		#			tag.missingData.append(i)
 
-			packetCount = 0
-			epcPacket = tag.missingData[packetCount] / 10.
-			requestPacket.append(epcPacket)
-			packetCount = packetCount + 10
+		#	packetCount = 0
+		#	epcPacket = tag.missingData[packetCount] / 10.
+		#	requestPacket.append(epcPacket)
+		#	packetCount = packetCount + 10
 
 		self.updateEntry()
 
