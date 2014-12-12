@@ -4,6 +4,7 @@ import globals as tag
 import time
 import saturn
 
+
 class UpdateTagReport:
 	def __init__(self):
 		self.sequence 	= 0
@@ -23,6 +24,8 @@ class UpdateTagReport:
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
 
+
+	
 		if tag.hwVersion is None:
 			return
 
@@ -93,27 +96,30 @@ class UpdateTagReport:
 
 		if tag.currSeq != 255 and tag.count <= 25199:
 			print ("Count: ") + str(tag.count) + (", Current Sequence:" ) + str(tag.currSeq) + (", Array: ") + str(len(tag.imArray))
+			'''
 			begin = 4
 			end = begin + 2
 			for x in range(10):
-				#tag.camEntry[tag.camID].insert(10 * (200 * tag.sequence + tag.currSeq) + x, int(tag.epc[begin:end], 16))
-				tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
+				tag.camEntry[tag.camID].insert(10 * (200 * tag.sequence + tag.currSeq) + x, int(tag.epc[begin:end], 16))
+				#tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
 				begin = end
 				end = begin + 2
 
 			if x == 9:
 				x = 0
-
-		#if tag.currSeq == 255: #and count?
-		#	for i in range(tag.imArray.length):
-		#		if tag.imArray[i] == 'invalid':
-		#			tag.missingData.append(i)
-
-		#	packetCount = 0
-		#	epcPacket = tag.missingData[packetCount] / 10.
-		#	requestPacket.append(epcPacket)
-		#	packetCount = packetCount + 10
-
+			'''
+			
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 1] = int(tag.epc[6:8], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 2] = int(tag.epc[8:10], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 3] = int(tag.epc[10:12], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 4] = int(tag.epc[12:14], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 5] = int(tag.epc[14:16], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 6] = int(tag.epc[16:18], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 7] = int(tag.epc[18:20], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 8] = int(tag.epc[20:22], 16)
+			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 9] = int(tag.epc[22:24], 16)
+			
 		self.updateEntry()
 
 

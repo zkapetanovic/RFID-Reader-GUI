@@ -32,7 +32,7 @@ plotData 	= [] 				#plot temperature data
 saturn 		= False
 
 #Camera
-imArray		= ['invalid' for x in range(25200)]
+imArray		= [128 for x in range(25200)]
 x 			= 0
 y 			= 60
 currSeq 	= 0 					#current EPC sequence
