@@ -177,7 +177,7 @@ class RFID_Reader_App:
 				plt.cla()															#clear plot
 				plt.clf()															#clear plot			
 				matrix = np.reshape(tag.imArray, (rows, columns)) / 255.0 		#create matrix
-				mat_image = ndimage.rotate(matrix, 90)
+				mat_image = ndimage.rotate(matrix, 270)
 				plt.gray()															#set to grayscale
 				self.image = wispApp.image.add_subplot(111) 						#create subplot
 				self.image.clear()													#clear previous image

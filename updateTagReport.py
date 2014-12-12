@@ -95,20 +95,19 @@ class UpdateTagReport:
 			tag.sequence += 1
 
 		if tag.currSeq != 255 and tag.count <= 25199:
-			print ("Count: ") + str(tag.count) + (", Current Sequence:" ) + str(tag.currSeq) + (", Array: ") + str(len(tag.imArray))
-			'''
+			print (("TRANSMITTING - Count: ") + str(tag.count) + (", Current Sequence:" ) + str(tag.currSeq))
 			begin = 4
 			end = begin + 2
 			for x in range(10):
-				tag.camEntry[tag.camID].insert(10 * (200 * tag.sequence + tag.currSeq) + x, int(tag.epc[begin:end], 16))
-				#tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
+				#tag.camEntry[tag.camID].insert(10 * (200 * tag.sequence + tag.currSeq) + x, int(tag.epc[begin:end], 16))
+				tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
 				begin = end
 				end = begin + 2
 
 			if x == 9:
 				x = 0
-			'''
 			
+			'''
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 1] = int(tag.epc[6:8], 16)
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 2] = int(tag.epc[8:10], 16)
@@ -119,7 +118,7 @@ class UpdateTagReport:
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 7] = int(tag.epc[18:20], 16)
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 8] = int(tag.epc[20:22], 16)
 			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 9] = int(tag.epc[22:24], 16)
-			
+			'''
 		self.updateEntry()
 
 
