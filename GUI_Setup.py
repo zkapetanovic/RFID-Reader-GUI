@@ -36,11 +36,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.pauseButton.setObjectName("Pause")
 		self.pauseButton.setGeometry(250, 470, 100, 30)
 
-<<<<<<< Updated upstream
-		self.clearButton = QtGui.QPushButton('Clear Table', self)
-=======
 		self.clearButton = QtGui.QPushButton('Clear Image', self)
->>>>>>> Stashed changes
 		self.clearButton.setObjectName("Clear")
 		self.clearButton.setGeometry(360, 470, 120, 30)
 
@@ -71,14 +67,10 @@ class GUI_Setup(QtGui.QMainWindow):
 		
 		self.xLabel = QtGui.QLabel("    <b>X-Value</b> (0 - 255):       ")
 		self.yLabel = QtGui.QLabel("    <b>Y-Value</b> (0 - 255):       ")
-<<<<<<< Updated upstream
-		self.statusLabel = QtGui.QLabel("<b>Status</b>: Tag not seen")
-=======
 		self.statusLabel = QtGui.QLabel("<b>Status</b>: No Tag Seen")
 		self.font = QtGui.QFont()
 		self.font.setPointSize(15)
 		self.statusLabel.setFont(self.font)
->>>>>>> Stashed changes
 
 		self.captureButton = QtGui.QPushButton("Enter Values")
 		self.captureButton.setFixedHeight(30)
@@ -133,11 +125,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.imageLayout.addWidget(self.xVal, 1, 4)
 		self.imageLayout.addWidget(self.yLabel, 2, 0)
 		self.imageLayout.addWidget(self.yVal, 2, 4)
-<<<<<<< Updated upstream
-		self.imageLayout.addWidget(self.statusLabel, 4, 0)
-=======
 		self.imageLayout.addWidget(self.statusLabel, 4, 0, 1,2)
->>>>>>> Stashed changes
 		self.imageLayout.addWidget(self.captureButton, 3, 4)
 		self.imageLayout.addWidget(self.imageCanvas, 5, 0, 5, 5)
 		

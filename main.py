@@ -43,11 +43,7 @@ class RFID_Reader_App:
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
-<<<<<<< Updated upstream
-		wispApp.clearButton.clicked.connect(self.clearTable)
-=======
 		wispApp.clearButton.clicked.connect(self.clearImage)
->>>>>>> Stashed changes
 
 
 	def readerSelect(self):
@@ -67,11 +63,7 @@ class RFID_Reader_App:
 			self.timer.timeout.connect(self.captureImage)
 			self.timer.timeout.connect(self.updateTemp)
 			self.timer.timeout.connect(self.updateAccel)
-<<<<<<< Updated upstream
-			self.timer.start(100)
-=======
 			self.timer.start(50)
->>>>>>> Stashed changes
 			self.initReader()
 
 		if self.pause == 1:
@@ -98,12 +90,7 @@ class RFID_Reader_App:
 
 	def initReader(self):
 		if self.impinjStart == True:
-<<<<<<< Updated upstream
-			#global impinjThread
-			#self.impinjThread = Reader()
-=======
 
->>>>>>> Stashed changes
 			self.impinjThread.daemon = True
 			wispApp.statusLabel.setText("<b>Status</b>: Charging")
 			self.impinjThread.start()
@@ -173,32 +160,7 @@ class RFID_Reader_App:
 
 
 	def captureImage(self):
-		tag.x = str("%s" % wispApp.xVal.toPlainText())
-		tag.y = str("%s" % wispApp.yVal.toPlainText())
 		if tag.tagType == "CA":
-<<<<<<< Updated upstream
-			wispApp.statusLabel.setText("<b>Status</b>: Transmitting image data")
-			rows 	= 144
-			columns = 175
-
-<<<<<<< HEAD
-			tag.x = str("%s" % wispApp.xVal.toPlainText())
-			tag.y = str("%s" % wispApp.xVal.toPlainText())
-=======
-			#tag.x = str("%s" % wispApp.xVal.toPlainText())
-			#tag.y = str("%s" % wispApp.xVal.toPlainText())
-			tag.x = 0
-			tag.y = 20
-			if tag.count >= 2500 or int(tag.tmp[2:4], 16) == 255:
-
-				#print "capture image"		
-				#camera_image = np.loadtxt(r'CAMERA.txt')
-				#raw_image = camera_image[0:25200]
->>>>>>> FETCH_HEAD
-			
-			if tag.count >= 25400 or int(tag.epc[2:4], 16) == 255:		
-				wispApp.statusLabel.setText("Status: Image captured")
-=======
 			wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
 			rows 	= 144
 			columns = 175
@@ -208,7 +170,6 @@ class RFID_Reader_App:
 			if tag.count >= 25199 or int(tag.epc[2:4], 16) == 255:
 				wispApp.statusLabel.setText("Status: Image captured")
 
->>>>>>> Stashed changes
 				for i in tag.imArray:
 					if i <= tag.x: 	i = 0
 					elif i > tag.y: i = 255
@@ -216,7 +177,7 @@ class RFID_Reader_App:
 				plt.cla()															#clear plot
 				plt.clf()															#clear plot			
 				matrix = np.reshape(tag.imArray, (rows, columns)) / 255.0 		#create matrix
-				mat_image = ndimage.rotate(matrix, 270)
+				mat_image = ndimage.rotate(matrix, 90)
 				plt.gray()															#set to grayscale
 				self.image = wispApp.image.add_subplot(111) 						#create subplot
 				self.image.clear()													#clear previous image
@@ -231,7 +192,7 @@ class RFID_Reader_App:
 				fileHandle.close()
 				tag.fileCount += 1
 				print name
-				time.sleep(2)
+				time.sleep(3)
 
 
 	def clearImage(self):
@@ -243,29 +204,6 @@ class RFID_Reader_App:
 
 		print ("Image Capture Cleared")
 
-<<<<<<< Updated upstream
-				plt.cla()
-				plt.clf()
-				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
-<<<<<<< HEAD
-=======
-				#print mat_image
->>>>>>> FETCH_HEAD
-				plt.gray()			
-				image = wispApp.image.add_subplot(111)
-				image.clear()
-				ax = wispApp.image.gca()
-				ax.set_axis_off()
-				image.imshow(mat_image)
-				wispApp.imageCanvas.draw()
-<<<<<<< HEAD
-
-=======
-				print ("Image Displayed")
->>>>>>> FETCH_HEAD
-				
-=======
->>>>>>> Stashed changes
 
 
 def main():
