@@ -73,7 +73,7 @@ class Reader(threading.Thread):
 
 			else:
 				#globals.tmp = "N/A"
-				#logger.info('no tag seen')
+				#logger.info('no)
 				return
 
 

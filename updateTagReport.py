@@ -3,6 +3,7 @@
 import globals as tag
 import time
 import saturn
+import numpy as np
 
 
 class UpdateTagReport:
@@ -81,7 +82,7 @@ class UpdateTagReport:
 		tag.prevSeq = tag.currSeq
 		tag.currSeq = int(tag.epc[2:4], 16)
 		tag.count = 10 * (200 * tag.sequence + tag.currSeq)
-
+		#print ("Current Sequence:" ) + str(tag.currSeq))
 		if tag.currSeq == 255 or tag.count >= 25199:
 			tag.sequence 	= 0
 			tag.currSeq 	= 0
@@ -95,7 +96,8 @@ class UpdateTagReport:
 			tag.sequence += 1
 
 		if tag.currSeq != 255 and tag.count <= 25199:
-			print (("TRANSMITTING - Count: ") + str(tag.count) + (", Current Sequence:" ) + str(tag.currSeq))
+			tag.saved = 0
+			#print (("TRANSMITTING - Count: ") + str(tag.count) + (", Current Sequence:" ) + str(tag.currSeq))
 			begin = 4
 			end = begin + 2
 			for x in range(10):
@@ -106,19 +108,15 @@ class UpdateTagReport:
 
 			if x == 9:
 				x = 0
-			
-			'''
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 1] = int(tag.epc[6:8], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 2] = int(tag.epc[8:10], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 3] = int(tag.epc[10:12], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 4] = int(tag.epc[12:14], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 5] = int(tag.epc[14:16], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 6] = int(tag.epc[16:18], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 7] = int(tag.epc[18:20], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 8] = int(tag.epc[20:22], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 9] = int(tag.epc[22:24], 16)
-			'''
+		'''	
+		if int(tag.epc[6:8], 16) == 255:
+			print ("ENTERED")
+			for i in range(25200):
+				if tag.imArray[i] == -1:
+					tag.dataReq.append(i)
+
+			np.savetxt('dataReq.txt', tag.dataReq, '%10s')
+		'''
 		self.updateEntry()
 
 

@@ -167,32 +167,36 @@ class RFID_Reader_App:
 
 			tag.x = str("%s" % wispApp.xVal.toPlainText())
 			tag.y = str("%s" % wispApp.xVal.toPlainText())
+			
 			if tag.count >= 25199 or int(tag.epc[2:4], 16) == 255:
-				wispApp.statusLabel.setText("Status: Image captured")
+				if tag.saved == 0:
+					tag.saved = 1
+					print int(tag.epc[2:4], 16)
+					wispApp.statusLabel.setText("Status: Image captured")
 
-				for i in tag.imArray:
-					if i <= tag.x: 	i = 0
-					elif i > tag.y: i = 255
-				
-				plt.cla()															#clear plot
-				plt.clf()															#clear plot			
-				matrix = np.reshape(tag.imArray, (rows, columns)) / 255.0 		#create matrix
-				mat_image = ndimage.rotate(matrix, 270)
-				plt.gray()															#set to grayscale
-				self.image = wispApp.image.add_subplot(111) 						#create subplot
-				self.image.clear()													#clear previous image
-				self.ax = wispApp.image.gca() 										#remove axis
-				self.ax.set_axis_off()												#remove axis
-				self.image.imshow(mat_image, aspect='auto')										#display image
-				wispApp.imageCanvas.draw()											#display image
-				
-				name = 'ImageLog/imagelog' + str(tag.fileCount)
-				fileHandle = open(name, 'a')
-				np.savetxt(fileHandle, tag.imArray, '%10s')
-				fileHandle.close()
-				tag.fileCount += 1
-				print name
-				time.sleep(3)
+					for i in tag.imArray:
+						if i <= tag.x: 	i = 0
+						elif i > tag.y: i = 255
+					
+					plt.cla()															#clear plot
+					plt.clf()															#clear plot			
+					matrix = np.reshape(tag.imArray, (rows, columns)) / 255.0 		#create matrix
+					mat_image = ndimage.rotate(matrix, 270)
+					plt.gray()															#set to grayscale
+					self.image = wispApp.image.add_subplot(111) 						#create subplot
+					self.image.clear()													#clear previous image
+					self.ax = wispApp.image.gca() 										#remove axis
+					self.ax.set_axis_off()												#remove axis
+					self.image.imshow(mat_image, aspect='auto')										#display image
+					wispApp.imageCanvas.draw()											#display image
+					
+					name = 'ImageLog/imagelog' + str(tag.fileCount)
+					fileHandle = open(name, 'a')
+					np.savetxt(fileHandle, tag.imArray, '%10s')
+					fileHandle.close()
+					tag.fileCount += 1
+					print name
+					tag.imArray = [128 for z in range(25200)]	
 
 
 	def clearImage(self):
