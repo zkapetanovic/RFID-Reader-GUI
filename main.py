@@ -9,14 +9,13 @@ from PyQt4 import QtGui, Qt, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import numpy as np
-import scipy
-from scipy import ndimage
+
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-import sys, threading, time, os
+import sys, threading, time
 import pkg_resources
 
 from GUI_Setup import GUI_Setup
@@ -43,7 +42,7 @@ class RFID_Reader_App:
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
-		wispApp.clearButton.clicked.connect(self.clearImage)
+		wispApp.clearButton.clicked.connect(self.clearTable)
 
 
 	def readerSelect(self):
@@ -63,7 +62,7 @@ class RFID_Reader_App:
 			self.timer.timeout.connect(self.captureImage)
 			self.timer.timeout.connect(self.updateTemp)
 			self.timer.timeout.connect(self.updateAccel)
-			self.timer.start(50)
+			self.timer.start(100)
 			self.initReader()
 
 		if self.pause == 1:
@@ -90,11 +89,11 @@ class RFID_Reader_App:
 
 	def initReader(self):
 		if self.impinjStart == True:
-
+			#global impinjThread
+			#self.impinjThread = Reader()
 			self.impinjThread.daemon = True
 			wispApp.statusLabel.setText("<b>Status</b>: Charging")
 			self.impinjThread.start()
-
 		elif self.usrpStart == True:
 			global usrp_tb
 			self.usrp_tb = my_top_block()
@@ -146,10 +145,6 @@ class RFID_Reader_App:
 
 	def updateAccel(self):
 		if tag.tagType == "0B" or tag.tagType == "0D":
-
-			if tag.saturn == True:
-				self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
-
 			wispApp.xAccel.setText(" X '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelX)
 			wispApp.yAccel.setText(" Y '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelY)
 			wispApp.zAccel.setText(" Z '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelZ)
@@ -158,8 +153,13 @@ class RFID_Reader_App:
 			wispApp.sliderX.setValue(tag.accelX)
 			wispApp.sliderZ.setValue(tag.accelZ)
 
+			if tag.saturn == True:
+				self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
+
 
 	def captureImage(self):
+		tag.x = str("%s" % wispApp.xVal.toPlainText())
+		tag.y = str("%s" % wispApp.yVal.toPlainText())
 		if tag.tagType == "CA":
 			wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
 			rows 	= 144
@@ -168,45 +168,22 @@ class RFID_Reader_App:
 			tag.x = str("%s" % wispApp.xVal.toPlainText())
 			tag.y = str("%s" % wispApp.xVal.toPlainText())
 			
-			if tag.count >= 25199 or int(tag.epc[2:4], 16) == 255:
-				if tag.saved == 0:
-					tag.saved = 1
-					print int(tag.epc[2:4], 16)
-					wispApp.statusLabel.setText("Status: Image captured")
+			if tag.index >= 25199 or int(tag.epc[2:4], 16) == 255:		
+				wispApp.statusLabel.setText("Status: Image captured")
+				for i in tag.imArray:
+					if i <= tag.x: 	i = 0
+					elif i > tag.y: i = 255
 
-					for i in tag.imArray:
-						if i <= tag.x: 	i = 0
-						elif i > tag.y: i = 255
-					
-					plt.cla()															#clear plot
-					plt.clf()															#clear plot			
-					matrix = np.reshape(tag.imArray, (rows, columns)) / 255.0 		#create matrix
-					mat_image = ndimage.rotate(matrix, 270)
-					plt.gray()															#set to grayscale
-					self.image = wispApp.image.add_subplot(111) 						#create subplot
-					self.image.clear()													#clear previous image
-					self.ax = wispApp.image.gca() 										#remove axis
-					self.ax.set_axis_off()												#remove axis
-					self.image.imshow(mat_image, aspect='auto')										#display image
-					wispApp.imageCanvas.draw()											#display image
-					
-					name = 'ImageLog/imagelog' + str(tag.fileCount)
-					fileHandle = open(name, 'a')
-					np.savetxt(fileHandle, tag.imArray, '%10s')
-					fileHandle.close()
-					tag.fileCount += 1
-					print name
-					tag.imArray = [128 for z in range(25200)]	
-
-
-	def clearImage(self):
-		plt.cla()																	#clear plot
-		plt.clf()																	#clear plot
-		self.image.clear()															#clear previous image
-		self.ax.set_axis_off()														#remove axis
-		tag.imArray = [128 for z in range(25200)]									#reset array
-
-		print ("Image Capture Cleared")
+				plt.cla()
+				plt.clf()
+				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
+				plt.gray()			
+				image = wispApp.image.add_subplot(111)
+				image.clear()
+				ax = wispApp.image.gca()
+				ax.set_axis_off()
+				image.imshow(mat_image)
+				wispApp.imageCanvas.draw()
 
 
 

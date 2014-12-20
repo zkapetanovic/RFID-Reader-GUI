@@ -32,17 +32,14 @@ plotData 	= [] 				#plot temperature data
 saturn 		= False
 
 #Camera
-imArray		= [-1 for x in range(25200)]
+imArray		= [128 for x in range(25200)]
 x 			= 0
-y 			= 60
+y 			= 50
 currSeq 	= 0 					#current EPC sequence
 prevSeq 	= 0 					#previous EPC sequence
 sequence 	= 0 					#counter for the number of EPC sequences
-count 		= 0						#count for the number of WISP Cam enteries received 
-fileCount 	= 0
-dataReq		= []
-saved 		= 0
-
-#Multiple WISP Cams
-camEntry = {}
-camID = 0
+index 		= 0
+begin 		= 4
+end 		= 6
+dataCount 	= 0
+camTag 		= 0

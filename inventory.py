@@ -16,6 +16,8 @@ tagsSeen = 0
 
 logger = logging.getLogger('sllurp')
 logger.setLevel(logging.INFO)
+logger.addHandler(logging.FileHandler('logfile.log'))
+
 args = None
 #modulation WISP5, tari 25
 
@@ -67,13 +69,13 @@ class Reader(threading.Thread):
 				time 		 = tag['LastSeenTimestampUTC'][0]
 				snr 		 = "N/A"
 
-				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))
+				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))
 				tagReport = UpdateTagReport()
 				tagReport.parseData(epc, rssi, snr, time)
 
 			else:
-				#globals.tmp = "N/A"
-				#logger.info('no)
+				globals.tmp = "N/A"
+				logger.info('no tag seen')
 				return
 
 
