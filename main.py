@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
  Created on Thursday July, 10, 2014
  @author Zerina Kapetanovic
