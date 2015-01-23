@@ -3,31 +3,33 @@
  Created on Thursday July, 10, 2014
  @author Zerina Kapetanovic
 """
-
+### GUI ###
 from PyQt4 import QtGui, Qt, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import numpy as np
 
-
+### GRAPHING ###
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import sys, threading, time
-import pkg_resources
+import pkg_resources			#SLLURP needs this....idk why
 
+### MODULES ###
 from GUI_Setup import GUI_Setup
 from inventory import Reader
 from updateTagReport import UpdateTagReport
 from saturn import SaturnDemo
+from localThread import localThread
 import globals as tag
 
 
 class RFID_Reader_App:
 	def __init__(self):
-
-		self.impinjThread = Reader()
+		
+		tag.impinjThread = Reader()
 		self.saturnThread = SaturnDemo()
 		self.usrpStart = False
 		self.impinjStart = False
@@ -36,7 +38,7 @@ class RFID_Reader_App:
 		self.pause = 0
 
 		wispApp.startButton.clicked.connect(self.start)
-		wispApp.stopButton.clicked.connect(self.stop)
+		wispApp.local3DButton.clicked.connect(self.initLocalization)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
@@ -65,17 +67,17 @@ class RFID_Reader_App:
 			self.initReader()
 
 		if self.pause == 1:
-			self.impinjThread.factory.resumeInventory()
+			tag.impinjThread.factory.resumeInventory()
 			self.pause = 0
 
 
 	def stop(self):
-		self.impinjThread.impinj.stop()
+		tag.impinjThread.impinj.stop()
 		self.timer.stop()
 
 
 	def pauseRun(self):
-		self.impinjThread.factory.pauseInventory()
+		tag.impinjThread.factory.pauseInventory()
 		self.pause = 1
 
 	def clearTable(self):
@@ -88,11 +90,9 @@ class RFID_Reader_App:
 
 	def initReader(self):
 		if self.impinjStart == True:
-			#global impinjThread
-			#self.impinjThread = Reader()
-			self.impinjThread.daemon = True
+			tag.impinjThread.daemon = True
 			wispApp.statusLabel.setText("<b>Status</b>: Charging")
-			self.impinjThread.start()
+			tag.impinjThread.start()
 		elif self.usrpStart == True:
 			global usrp_tb
 			self.usrp_tb = my_top_block()
@@ -100,15 +100,14 @@ class RFID_Reader_App:
 
 
 	def initSaturn(self):
-		#self.saturnThread = SaturnDemo()
 		self.saturnThread.daemon = True
 		self.saturnThread.start()
 		tag.saturn = True
 
 	def initLocalization(self):
-		self.plottingThread = LocalizationPlotting()
-		self.plottingThread.daemon = True
-		self.plottingThread.start()
+		self.thread = localThread()
+		self.thread.daemon = True
+		self.thread.start()
 
 
 	############### Update GUI ##############

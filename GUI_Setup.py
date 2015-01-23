@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+ Created on Thursday July, 10, 2014
+ @author Zerina Kapetanovic
+"""
+
 from PyQt4 import QtGui, Qt, QtCore
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -28,21 +33,21 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.startButton.setObjectName("Start")
 		self.startButton.setGeometry(30, 470, 100, 30)
 
-		self.stopButton = QtGui.QPushButton('Stop', self)
-		self.stopButton.setObjectName("Stop")
-		self.stopButton.setGeometry(140, 470, 100, 30)
-
 		self.pauseButton = QtGui.QPushButton('Pause', self)
 		self.pauseButton.setObjectName("Pause")
-		self.pauseButton.setGeometry(250, 470, 100, 30)
+		self.pauseButton.setGeometry(140, 470, 100, 30)
 
 		self.clearButton = QtGui.QPushButton('Clear Image', self)
 		self.clearButton.setObjectName("Clear")
-		self.clearButton.setGeometry(360, 470, 120, 30)
+		self.clearButton.setGeometry(250, 470, 100, 30)
 
 		self.saturnButton = QtGui.QPushButton('Saturn', self)
 		self.saturnButton.setObjectName("Saturn")
-		self.saturnButton.setGeometry(490, 470, 100, 30)
+		self.saturnButton.setGeometry(360, 470, 100, 30)
+
+		self.local3DButton = QtGui.QPushButton('Localization', self)
+		self.local3DButton.setObjectName("Localization")
+		self.local3DButton.setGeometry(490, 470, 100, 30)
 
 		#### Accelerometer ####
 		self.xAccel = QtGui.QLabel(self)
@@ -143,6 +148,73 @@ class GUI_Setup(QtGui.QMainWindow):
 		accelLayout.addWidget(self.xAccel, 5, 3, QtCore.Qt.AlignCenter)
 		accelLayout.addWidget(self.sliderX, 6, 3)
 		
+		#Localization
+		self.numPoints = QtGui.QComboBox(self)
+		self.numPoints.setEditable(False)
+		self.numPoints.addItem('2')
+		self.numPoints.addItem('3')
+		self.numPoints.addItem('4')
+
+		self.ch1Label = QtGui.QLabel("Channel 1:", self)
+		self.ch1Label.setFont(QFont('Arial', 10))
+
+		self.ch2Label = QtGui.QLabel("Channel 2:", self)
+		self.ch2Label.setFont(QFont('Arial', 10))
+
+		self.ch3Label = QtGui.QLabel("Channel 3:", self)
+		self.ch3Label.setFont(QFont('Arial', 10))
+
+		self.ch4Label = QtGui.QLabel("Channel 4:", self)
+		self.ch4Label.setFont(QFont('Arial', 10))
+
+		self.ch1 = QtGui.QTextEdit(self)
+		self.ch1.setFixedHeight(25)
+		self.ch1.setFixedWidth(60)
+		self.ch1.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+		self.ch2 = QtGui.QTextEdit(self)
+		self.ch2.setFixedHeight(25)
+		self.ch2.setFixedWidth(60)
+		self.ch2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+		self.ch3 = QtGui.QTextEdit(self)
+		self.ch3.setFixedHeight(25)
+		self.ch3.setFixedWidth(60)
+		self.ch3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+		self.ch4 = QtGui.QTextEdit(self)
+		self.ch4.setFixedHeight(25)
+		self.ch4.setFixedWidth(60)
+		self.ch4.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+		self.pointsLabel = QtGui.QLabel("Select Number of Points:", self)
+		self.pointsLabel.setFont(QFont('Arial', 10))
+
+		self.chanLabel = QtGui.QLabel("Channel Coordinates (x, y, z):", self)
+		self.chanLabel.setFont(QFont('Arial', 10))
+
+		self.localTable = QtGui.QTableWidget(0, 2, self)
+		self.localTable.setFont(QFont('Courier New', 10))
+		self.localTable.horizontalHeader().setStretchLastSection(True)
+		self.localTable.setHorizontalHeaderLabels(('WISP ID', 'Localization (x, y, z)'))
+		self.localTable.setFixedWidth(432)
+
+		localLayout = QtGui.QGridLayout()
+		localLayout.setRowMinimumHeight(0, 20)
+		localLayout.addWidget(self.pointsLabel, 0, 0)
+		localLayout.addWidget(self.numPoints, 0, 1)
+		localLayout.addWidget(self.chanLabel, 1, 0)
+		localLayout.addWidget(self.ch1Label, 2, 0)
+		localLayout.addWidget(self.ch2Label, 3, 0)
+		localLayout.addWidget(self.ch3Label, 4, 0)
+		localLayout.addWidget(self.ch4Label, 5, 0)
+		localLayout.addWidget(self.ch1, 2, 1)
+		localLayout.addWidget(self.ch2, 3, 1)
+		localLayout.addWidget(self.ch3, 4, 1)
+		localLayout.addWidget(self.ch4, 5, 1)
+		localLayout.addWidget(self.localTable, 6, 0)
+
+		#### TABS ####
 		tabFrame = QtGui.QFrame(self)
 		tabFrame.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
 		tabFrame.setLineWidth(4)
@@ -152,18 +224,21 @@ class GUI_Setup(QtGui.QMainWindow):
 		tabs.resize(450, 500)
 		tabs.move(720, 10)
 			
-		accelTab = QtGui.QWidget()
-		tempTab = QtGui.QWidget()
-		imageTab = QtGui.QWidget()
+		accelTab 	= QtGui.QWidget()
+		tempTab 	= QtGui.QWidget()
+		localTab 	= QtGui.QWidget()
+		imageTab 	= QtGui.QWidget()
 
+		tabs.addTab(localTab, "Localization")
 		tabs.addTab(imageTab, "Image Capture")
 		tabs.addTab(accelTab, "Accelerometer")
 		tabs.addTab(tempTab, "Temperature")
 		
 		accelTab.setLayout(accelLayout)
 		tempTab.setLayout(self.tempLayout)
+		localTab.setLayout(localLayout)
 		imageTab.setLayout(self.imageLayout)
-		
+
 		########## Stylesheet ##########
 		Stylesheet = """
 		QMainWindow {border: 2px solid #262323;}

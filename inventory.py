@@ -48,11 +48,9 @@ class Reader(threading.Thread):
 
 	def run(self):
 		self.initReader()
-		
-		
+				
 	def politeShutdown(factory):
 		return factory.politeShutdown()
-
 
 	def tagReportCallback(self, llrpMsg):
 		"""Function to run each time the reader reports seeing tags."""
@@ -63,22 +61,40 @@ class Reader(threading.Thread):
 		
 		if len(tags):
 			for tag in tags:
-				tagsSeen += tag['TagSeenCount'][0]
+				tagsSeen 	 += tag['TagSeenCount'][0]
 				epc 		 = tag['EPC-96']
 				rssi 		 = tag['PeakRSSI'][0]
 				time 		 = tag['LastSeenTimestampUTC'][0]
 				snr 		 = "N/A"
-
+				
 				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))
 				tagReport = UpdateTagReport()
 				tagReport.parseData(epc, rssi, snr, time)
 
 			else:
 				globals.tmp = "N/A"
-				logger.info('no tag seen')
+				#logger.info('no tag seen')
 				return
-
-
+				
+	
+	def access(self, proto):
+		readSpecParam = None
+   		print ("Entered Access")
+   		if globals.retrieve == 1:
+   			print ("entered if statement")
+   			for i in range(len(tag.getPacket)):
+   				getWord = tag.getPacket[i]
+   		
+    			readSpecParam = {
+        			'OpSpecID': 0,
+        			'MB': 1,
+        			'WordPtr': getWord,
+        			'AccessPassword': 0,
+        			'WordCount': 6				#no need to use WordCount
+        		}
+    
+    			return proto.startAccess(readWords = readSpecParam)
+    		globals.retrieve = 0
 
 	def initReader(self):
 		global args
@@ -110,6 +126,7 @@ class Reader(threading.Thread):
 
 
 		self.factory.addTagReportCallback(self.tagReportCallback)
+		self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
 		reactor.connectTCP(args.host, args.port, self.factory)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()

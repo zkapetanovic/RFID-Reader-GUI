@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-
+"""
+ Created on Thursday July, 10, 2014
+ @author Zerina Kapetanovic
+"""
 
 import globals as tag
+from localThread import localThread
+import sllurp.llrp as llrp
+import numpy as np
 import time
 
 class UpdateTagReport:
@@ -14,8 +20,6 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
-
-
 	
 		if tag.hwVersion is None:
 			return
@@ -38,6 +42,9 @@ class UpdateTagReport:
 		#Camera
 		elif tag.tagType == "CA": 
 			self.imageCapture()
+
+		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
+		#	self.localization()
 
 		#Unknown tag type
 		else:
@@ -63,6 +70,11 @@ class UpdateTagReport:
 		tag.sensorData = tempValue
 		self.updateEntry()
 
+	def localization(self):
+		self.lThread = localThread()
+		self.lThread.daemon = True
+		self.lThread.start()
+
 
 	def imageCapture(self):
 		tag.sensorData = int(tag.epc[2:24], 16)
@@ -70,18 +82,9 @@ class UpdateTagReport:
 		tag.currSeq = int(tag.epc[2:4], 16)
 		tag.index = 10 * (200 * tag.sequence + tag.currSeq)
 
-		print tag.index, tag.sequence, tag.currSeq
+		#print tag.index, tag.sequence, tag.currSeq
 
-
-		if tag.currSeq == 255 or tag.index >= 25199:
-			tag.sequence 	= 0
-			tag.currSeq 	= 0
-			tag.prevSeq 	= 0
-			tag.count 		= 0
-			return
-
-		if tag.currSeq < tag.prevSeq:
-			tag.sequence += 1
+		if tag.currSeq < tag.prevSeq: tag.sequence += 1
 
 		if tag.currSeq != 255 or tag.index <= 25199:
 			begin = 4
@@ -91,21 +94,33 @@ class UpdateTagReport:
 				begin = end
 				end = begin + 2
 
-			if x == 9:
-				x = 0
-			'''
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 0] = int(tag.epc[4:6], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 1] = int(tag.epc[6:8], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 2] = int(tag.epc[8:10], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 3] = int(tag.epc[10:12], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 4] = int(tag.epc[12:14], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 5] = int(tag.epc[14:16], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 6] = int(tag.epc[16:18], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 7] = int(tag.epc[18:20], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 8] = int(tag.epc[20:22], 16)
-			tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + 9] = int(tag.epc[22:24], 16)
-			'''
+			if x == 9: x = 0
+		
+		######## Get missing data ########
+		if tag.currSeq == 255:
+			for i in range(len(tag.imArray)):
+				if tag.imArray[i] == -1:
+					tag.dataIndex.append(i) 					
+
+			j = 0
+			while j < len(tag.dataIndex):
+				missingPacket = tag.dataIndex[j] / 10.
+				tag.getPacket.append(missingPacket) 
+				j = j + 10
+			tag.retrieve = 1
+			print (tag.retrieve)
+		#	tag.impinjThread.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, tag.impinjThread.access)
+		#	print "Access callback added"
+
+		if tag.currSeq == 255 or tag.index >= 25199:
+			tag.sequence, tag.currSeq, tag.prevSeq, tag.count = 0, 0, 0, 0
+			return
+
+
+			
 		self.updateEntry()
+
+			
 
 	def updateEntry(self):
 		tag.entry = (tag.time, tag.wispID, tag.tagType, tag.tmp, tag.sensorData, tag.snr, tag.rssi)
@@ -114,7 +129,5 @@ class UpdateTagReport:
 
 
 
-
-		
 
 
