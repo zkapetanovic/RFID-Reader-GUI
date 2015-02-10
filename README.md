@@ -2,6 +2,7 @@ RFID-Reader-GUI
 ===============
 
 1. Installations:
+      - Python 2.7.x
       - Qt 4.8.7
       - PyQt4
       - PyOpenGL
