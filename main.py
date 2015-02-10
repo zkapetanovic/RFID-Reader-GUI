@@ -21,7 +21,7 @@ import pkg_resources
 from GUI_Setup import GUI_Setup
 from inventory import Reader
 from updateTagReport import UpdateTagReport
-from saturn import SaturnDemo
+#from saturn import SaturnDemo
 import globals as tag
 
 
@@ -29,7 +29,7 @@ class RFID_Reader_App:
 	def __init__(self):
 
 		self.impinjThread = Reader()
-		self.saturnThread = SaturnDemo()
+#		self.saturnThread = SaturnDemo()
 		self.usrpStart = False
 		self.impinjStart = False
 
@@ -39,7 +39,7 @@ class RFID_Reader_App:
 		wispApp.startButton.clicked.connect(self.start)
 		wispApp.stopButton.clicked.connect(self.stop)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
-		wispApp.saturnButton.clicked.connect(self.initSaturn)
+#		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
 		wispApp.clearButton.clicked.connect(self.clearTable)
