@@ -27,6 +27,7 @@ class localThread(threading.Thread):
 		threading.Thread.__init__(self)
 		self.cam 	= 0;
 		self.Win3D 	= 1;
+		
 	def run(self):
 		self.showTag()
 

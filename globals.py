@@ -46,9 +46,13 @@ epcPacket 		= 0
 getPacket		= []
 dataIndex 		= []
 retrieve 		= 0
+wordPtr			= 0
 
+
+from saturn import SaturnDemo
 #Threads
-impinjThread = 0
+impinjThread 	= 0
+startSaturn 	= SaturnDemo() 
 
 
 ###################### LOCALIZATION ######################

@@ -15,13 +15,13 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import sys, threading, time
-import pkg_resources			#SLLURP needs this....idk why
+#import pkg_resources			#SLLURP needs this....idk why
 
 ### MODULES ###
 from GUI_Setup import GUI_Setup
 from inventory import Reader
 from updateTagReport import UpdateTagReport
-from saturn import SaturnDemo
+import saturn as saturn
 from localThread import localThread
 import globals as tag
 
@@ -30,7 +30,7 @@ class RFID_Reader_App:
 	def __init__(self):
 		
 		tag.impinjThread = Reader()
-		self.saturnThread = SaturnDemo()
+		tag.startSaturn = saturn.SaturnDemo()
 		self.usrpStart = False
 		self.impinjStart = False
 
@@ -100,8 +100,10 @@ class RFID_Reader_App:
 
 
 	def initSaturn(self):
-		self.saturnThread.daemon = True
-		self.saturnThread.start()
+		tag.startSaturn.daemon =  True
+		self.startSaturn.start()
+		#self.saturnThread.daemon = True
+		#self.saturnThread.start()
 		tag.saturn = True
 
 	def initLocalization(self):
@@ -130,7 +132,7 @@ class RFID_Reader_App:
 		
 	
 	def updateTemp(self):
-		if tag.tagType == "0F" or tag.tagType == "0E":
+		if tag.tagType == "0F" or tag.tagType == "0E": 
 			plt.clf()
 			plt.grid(True)
 			tag.plotData.append(tag.sensorData)
@@ -151,8 +153,8 @@ class RFID_Reader_App:
 			wispApp.sliderX.setValue(tag.accelX)
 			wispApp.sliderZ.setValue(tag.accelZ)
 
-			if tag.saturn == True:
-				self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
+			#if tag.saturn == True:
+			#	self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
 
 
 	def captureImage(self):
