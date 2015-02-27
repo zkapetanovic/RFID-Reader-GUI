@@ -46,14 +46,11 @@ epcPacket 		= 0
 getPacket		= []
 dataIndex 		= []
 retrieve 		= 0
-wordPtr			= 0
 
-
-from saturn import SaturnDemo
 #Threads
-impinjThread 	= 0
-startSaturn 	= SaturnDemo() 
+impinjThread = 0
 
+'''
 
 ###################### LOCALIZATION ######################
 from cam import cam
@@ -120,4 +117,4 @@ fit =1.02*fit
 #fit = np.array([[1.018,-6.763],[1.06,-112.8],[1.069,-218.1],[1.067,-321.3]])
 
 
-
+'''

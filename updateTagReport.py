@@ -5,13 +5,13 @@
 """
 
 import globals as tag
-from localThread import localThread
+#from localThread import localThread
 import sllurp.llrp as llrp
 import numpy as np
 import time
 
 class UpdateTagReport:
-	def parseData(self, epc, rssi, snr, time, readData):
+	def parseData(self, epc, rssi, snr, time):
 		tag.epc 			= epc	
 		tag.tmp 			= "%02X" % int(epc[0:24], 16)
 		tag.tagType 		= "%02X" % int(epc[0:2], 16)
@@ -20,8 +20,7 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
-		tag.readData		= readData
-		print tag.tagType
+	
 		if tag.hwVersion is None:
 			return
 
@@ -29,7 +28,15 @@ class UpdateTagReport:
 		if tag.wispID not in tag.idEntry.keys():
 			tag.idEntry[tag.wispID] = tag.newRow
 			tag.newRow += 1
-
+		'''
+		log = [[tag.epc, tag.time]]	
+		camLog = open('camLog.csv', 'w')
+		for row in log:
+			for column in row:
+				camLog.write('%d ' % column)
+			  	camLog.write('\n')
+		camLog.close()
+		'''
 		#Accelerometer WISP
 		if tag.tagType == "0B" or tag.tagType == "0D":
 			if tag.tagType == "0B": alpha = 1.16
@@ -41,17 +48,20 @@ class UpdateTagReport:
 		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
 
 		#Camera
-		#elif tag.tagType == "CA": 
-		elif tag.readData[0:2] == "CA":
-			self.imageCaptureReadCMD()
-			#self.imageCaptureEPC()
+		elif tag.tagType == "CA": 
+			log = [[tag.epc, tag.time]]
+			fileHandle = open('camLog.txt', 'a')
+			np.savetxt(fileHandle, log, '%10s')
+			fileHandle.close()
+			self.imageCapture()
+
 		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
 		#	self.localization()
 
 		#Unknown tag type
 		else:
-			tag.sensorData = "N/A"
-			tag.camInfo = 0
+			#tag.sensorData = "N/A"
+			#tag.camInfo = 0
 			self.updateEntry()
 
 	def accelerometer(self, alpha):
@@ -64,36 +74,21 @@ class UpdateTagReport:
 		tag.accelZ = zData * percentage
 		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (tag.accelX, tag.accelY, tag.accelZ)
 		self.updateEntry()
-		
-		if tag.saturnStart:
-			tag.saturnStart.setAngles(tag.xAccel, tag.yAccel, tag.zAccel)
+
 
 	def temperature(self):
 		tag.temp = int(tag.epc[2:6], 16)
 		tempValue = ((tag.temp - 673) * 423.) / 1024.
 		tag.sensorData = tempValue
 		self.updateEntry()
-		
 
-	def localization(self):
-		self.lThread = localThread()
-		self.lThread.daemon = True
-		self.lThread.start()
+	#def localization(self):
+	#	self.lThread = localThread()
+	#	self.lThread.daemon = True
+	#	self.lThread.start()
 
-	def imageCaptureReadCMD(self):
-		imageData = tag.readData[2:X]
- 		begin 	= 4
- 		end 	= 6
- 		
-		for x in range(30): #30 bytes of data
-			tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
-			begin = end
-			end = end + 2
-			tag.index = tag.index + 1
-		
-		tag.wordPtr = tag.wordPtr + 16
 
-	def imageCaptureEPC(self):
+	def imageCapture(self):
 		tag.sensorData = int(tag.epc[2:24], 16)
 		tag.prevSeq = tag.currSeq
 		tag.currSeq = int(tag.epc[2:4], 16)
@@ -109,13 +104,11 @@ class UpdateTagReport:
 			for x in range(10):
 				tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
 				begin = end
-				end = end + 2
+				end = begin + 2
 
 			if x == 9: x = 0
-			
-		
+
 		######## Get missing data ########
-		'''
 		if tag.currSeq == 255:
 			for i in range(len(tag.imArray)):
 				if tag.imArray[i] == -1:
@@ -126,21 +119,36 @@ class UpdateTagReport:
 				missingPacket = tag.dataIndex[j] / 10.
 				tag.getPacket.append(missingPacket) 
 				j = j + 10
-
 			tag.retrieve = 1
-		'''
+			print (tag.retrieve)
+
 		if tag.currSeq == 255 or tag.index >= 25199:
 			tag.sequence, tag.currSeq, tag.prevSeq, tag.count = 0, 0, 0, 0
 			return
-		
+	
 		self.updateEntry()
 
-			
+	
+	def imageCaptureReadCMD(self):
+		imageData = tag.readData[2:X]
+ 		begin 	= 4
+ 		end 	= 6
+ 		
+		for x in range(30): #30 bytes of data
+			tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
+			begin = end
+			end = end + 2
+			tag.index = tag.index + 1
+		
+		tag.wordPtr = tag.wordPtr + 16	
 
 	def updateEntry(self):
 		tag.entry = (tag.time, tag.wispID, tag.tagType, tag.tmp, tag.sensorData, tag.snr, tag.rssi)
 		tag.entryCount += 1
 		tag.data.append(tag.entry)
+
+
+
 
 
 

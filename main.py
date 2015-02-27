@@ -15,14 +15,14 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import sys, threading, time
-#import pkg_resources			#SLLURP needs this....idk why
+import pkg_resources			#SLLURP needs this....idk why
 
 ### MODULES ###
 from GUI_Setup import GUI_Setup
 from inventory import Reader
 from updateTagReport import UpdateTagReport
-import saturn as saturn
-from localThread import localThread
+#from saturn import SaturnDemo
+#from localThread import localThread
 import globals as tag
 
 
@@ -30,7 +30,7 @@ class RFID_Reader_App:
 	def __init__(self):
 		
 		tag.impinjThread = Reader()
-		tag.startSaturn = saturn.SaturnDemo()
+		#self.saturnThread = SaturnDemo()
 		self.usrpStart = False
 		self.impinjStart = False
 
@@ -38,9 +38,9 @@ class RFID_Reader_App:
 		self.pause = 0
 
 		wispApp.startButton.clicked.connect(self.start)
-		wispApp.local3DButton.clicked.connect(self.initLocalization)
+		#wispApp.local3DButton.clicked.connect(self.initLocalization)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
-		wispApp.saturnButton.clicked.connect(self.initSaturn)
+		#wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
 		wispApp.clearButton.clicked.connect(self.clearTable)
@@ -99,17 +99,15 @@ class RFID_Reader_App:
 			self.usrp_tb.start()
 
 
-	def initSaturn(self):
-		tag.startSaturn.daemon =  True
-		self.startSaturn.start()
-		#self.saturnThread.daemon = True
-		#self.saturnThread.start()
-		tag.saturn = True
+	#def initSaturn(self):
+	#	self.saturnThread.daemon = True
+	#	self.saturnThread.start()
+	#	tag.saturn = True
 
-	def initLocalization(self):
-		self.thread = localThread()
-		self.thread.daemon = True
-		self.thread.start()
+	#def initLocalization(self):
+	#	self.thread = localThread()
+	#	self.thread.daemon = True
+	#	self.thread.start()
 
 
 	############### Update GUI ##############
@@ -132,7 +130,7 @@ class RFID_Reader_App:
 		
 	
 	def updateTemp(self):
-		if tag.tagType == "0F" or tag.tagType == "0E": 
+		if tag.tagType == "0F" or tag.tagType == "0E":
 			plt.clf()
 			plt.grid(True)
 			tag.plotData.append(tag.sensorData)
@@ -153,8 +151,8 @@ class RFID_Reader_App:
 			wispApp.sliderX.setValue(tag.accelX)
 			wispApp.sliderZ.setValue(tag.accelZ)
 
-			#if tag.saturn == True:
-			#	self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
+			if tag.saturn == True:
+				self.saturnThread.setAngles(tag.accelX, tag.accelY, tag.accelZ)
 
 
 	def captureImage(self):
