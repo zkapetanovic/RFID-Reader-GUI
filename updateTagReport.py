@@ -20,6 +20,7 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
+		tag.readData		= readData
 	
 		if tag.hwVersion is None:
 			return
@@ -28,15 +29,7 @@ class UpdateTagReport:
 		if tag.wispID not in tag.idEntry.keys():
 			tag.idEntry[tag.wispID] = tag.newRow
 			tag.newRow += 1
-		'''
-		log = [[tag.epc, tag.time]]	
-		camLog = open('camLog.csv', 'w')
-		for row in log:
-			for column in row:
-				camLog.write('%d ' % column)
-			  	camLog.write('\n')
-		camLog.close()
-		'''
+
 		#Accelerometer WISP
 		if tag.tagType == "0B" or tag.tagType == "0D":
 			if tag.tagType == "0B": alpha = 1.16
@@ -53,7 +46,7 @@ class UpdateTagReport:
 			fileHandle = open('camLog.txt', 'a')
 			np.savetxt(fileHandle, log, '%10s')
 			fileHandle.close()
-			self.imageCapture()
+			self.imageCaptureEPC()
 
 		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
 		#	self.localization()
@@ -87,8 +80,21 @@ class UpdateTagReport:
 	#	self.lThread.daemon = True
 	#	self.lThread.start()
 
-
-	def imageCapture(self):
+	def imageCaptureReadCMD(self):
+		imageData = tag.readData[2:X]
+ 		begin 	= 4
+ 		end 	= 6
+ 	
+	 	if tag.index <= 25344 or tag.wordPtr <= 12692:
+			for x in range(30): #30 bytes of data
+				tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
+				begin = end
+				end = end + 2
+				tag.index = tag.index + 1
+			
+			tag.wordPtr = tag.wordPtr + 16
+			
+	def imageCaptureEPC(self):
 		tag.sensorData = int(tag.epc[2:24], 16)
 		tag.prevSeq = tag.currSeq
 		tag.currSeq = int(tag.epc[2:4], 16)
