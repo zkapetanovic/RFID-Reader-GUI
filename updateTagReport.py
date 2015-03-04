@@ -20,7 +20,7 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
-		tag.readData		= readData
+		#tag.readData		= readData
 	
 		if tag.hwVersion is None:
 			return
