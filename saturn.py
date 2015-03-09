@@ -128,6 +128,7 @@ class SaturnDemo(threading.Thread):
 		self.angleX = senseAngleX - self.viewAngleX
 		self.angleY = senseAngleY - self.viewAngleY
 
+
 	def render(self):
 		glClearColor(0, 0, 0, 1)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

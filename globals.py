@@ -28,11 +28,8 @@ accelZ 		= 0 				#accelerometer wisp z tilt
 #Temperature
 plotData 	= [] 				#plot temperature data
 
-#Saturn
-saturn 		= False
-
 #Camera
-imArray			= [128 for x in range(25344)]
+imArray			= [128 for x in range(25200)]
 x 				= 0
 y 				= 50
 currSeq 		= 0 					#current EPC sequence
@@ -46,10 +43,12 @@ epcPacket 		= 0
 getPacket		= []
 dataIndex 		= []
 retrieve 		= 0
+readData 		= 0
+wordPtr			= 0
 
 #Threads
 impinjThread = 0
-
+saturnThread = 0
 '''
 
 ###################### LOCALIZATION ######################

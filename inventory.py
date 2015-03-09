@@ -2,8 +2,8 @@ from __future__ import print_function
 import logging
 import pkg_resources
 import pprint
+from ast import literal_eval
 import threading
-
 import sllurp.llrp as llrp
 from sllurp.llrp_proto import LLRPROSpec, ModeIndex_Name2Type
 from twisted.internet import reactor, defer
@@ -41,6 +41,8 @@ class Reader(threading.Thread):
 		threading.Thread.__init__(self)
 		impinj = reactor
 		self.impinj = impinj
+		self.tagReport = UpdateTagReport()
+		self.readData = 0
 
 	def run(self):
 		self.initReader() 
@@ -62,28 +64,38 @@ class Reader(threading.Thread):
 				epc 		  = tag['EPC-96']
 				rssi 		  = tag['PeakRSSI'][0]
 				time 		  = tag['LastSeenTimestampUTC'][0]
-				#opSpec		  = tag['OpSpecResult']
 				snr 		  = "N/A"
-				readData	  = 1
+
+				try:
+					opSpec	  = tag['OpSpecResult']['ReadData']
+					data = opSpec.encode("string_escape")
+					self.readData = data.replace('\\x', '')
+
+				except:
+					logger.error('Read CMD not excuted, cannot retrieve data')
+					#readData = 0
 				
-				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))
-				tagReport = UpdateTagReport()
-				tagReport.parseData(epc, rssi, snr, time)
+				'''
+				except KeyError as ke:
+					print(ke)
+					import ipdb; ipdb.set_trace()
+				'''
+				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))				
+				self.tagReport.parseData(epc, rssi, snr, time, self.readData)
 
 		else:
-			globals.tmp = "N/A"
+			#globals.tmp = "N/A"
 			#logger.info('no tag seen')
-			#return
+			return
 
 	def access (self, proto):
 	    readSpecParam = None
-	    print ("Entered Access")
 	    readSpecParam = {
 	        'OpSpecID': 0,
 	        'MB': 0, 
-	        'WordPtr': 0,
+	        'WordPtr': globals.wordPtr,
 	        'AccessPassword': 0,
-	        'WordCount': 16				
+	        'WordCount': 15
 	        }
 	    
 	    proto.startAccess(readWords = readSpecParam) #removed return
@@ -119,9 +131,9 @@ class Reader(threading.Thread):
 									'EnableAccessSpecID' : True 
 									})
 
-
-		self.factory.addTagReportCallback(self.tagReportCallback)
 		self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
+		self.factory.addTagReportCallback(self.tagReportCallback)
+		
 		reactor.connectTCP(args.host, args.port, self.factory)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()

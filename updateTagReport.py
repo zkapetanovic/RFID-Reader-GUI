@@ -11,7 +11,7 @@ import numpy as np
 import time
 
 class UpdateTagReport:
-	def parseData(self, epc, rssi, snr, time):
+	def parseData(self, epc, rssi, snr, time, readData):
 		tag.epc 			= epc	
 		tag.tmp 			= "%02X" % int(epc[0:24], 16)
 		tag.tagType 		= "%02X" % int(epc[0:2], 16)
@@ -20,7 +20,7 @@ class UpdateTagReport:
 		tag.snr 			= snr
 		tag.rssi 			= rssi
 		tag.time 			= time	#microseconds
-		#tag.readData		= readData
+		tag.readData		= readData
 	
 		if tag.hwVersion is None:
 			return
@@ -41,12 +41,16 @@ class UpdateTagReport:
 		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
 
 		#Camera
-		elif tag.tagType == "CA": 
-			log = [[tag.epc, tag.time]]
-			fileHandle = open('camLog.txt', 'a')
-			np.savetxt(fileHandle, log, '%10s')
-			fileHandle.close()
-			self.imageCaptureEPC()
+		elif tag.tagType == "05": 
+			print ("entered elif")
+			#log = [[tag.epc, tag.time]]
+			#fileHandle = open('camLog.txt', 'a')
+			#np.savetxt(fileHandle, log, '%10s')
+			#fileHandle.close()
+			if len(readData) == 60:
+				self.imageCaptureReadCMD() 
+			else:
+				self.updateEntry()
 
 		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
 		#	self.localization()
@@ -58,6 +62,7 @@ class UpdateTagReport:
 			self.updateEntry()
 
 	def accelerometer(self, alpha):
+		
 		percentage = alpha * 100 / 1024.
 		xData = int(tag.epc[6:10], 16)
 		yData = int(tag.epc[2:6], 16)
@@ -66,6 +71,13 @@ class UpdateTagReport:
 		tag.accelY = 100 - yData * percentage
 		tag.accelZ = zData * percentage
 		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (tag.accelX, tag.accelY, tag.accelZ)
+
+		print str(xData) + str(" ") + str(yData) + str(" ") +  str(zData)
+		print str(tag.accelX) + str(" ") +  str(tag.accelY) + str(" ") +  str(tag.accelZ)
+
+		if tag.saturnThread:
+			tag.saturnThread.setAngles(xData, yData, zData)
+
 		self.updateEntry()
 
 
@@ -81,18 +93,22 @@ class UpdateTagReport:
 	#	self.lThread.start()
 
 	def imageCaptureReadCMD(self):
-		imageData = tag.readData[2:X]
- 		begin 	= 4
- 		end 	= 6
+		print ("Entered ReadCMD")
+ 		begin 	= 0
+ 		end 	= 2
  	
-	 	if tag.index <= 25344 or tag.wordPtr <= 12692:
-			for x in range(30): #30 bytes of data
+	 	if tag.index < 25200 and tag.wordPtr < 12600:
+			for x in range(30): #32 bytes of data
 				tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
 				begin = end
 				end = end + 2
 				tag.index = tag.index + 1
 			
-			tag.wordPtr = tag.wordPtr + 16
+			tag.wordPtr = tag.wordPtr + 15
+			print (tag.index)
+
+
+		self.updateEntry()
 			
 	def imageCaptureEPC(self):
 		tag.sensorData = int(tag.epc[2:24], 16)
@@ -134,19 +150,6 @@ class UpdateTagReport:
 	
 		self.updateEntry()
 
-	
-	def imageCaptureReadCMD(self):
-		imageData = tag.readData[2:X]
- 		begin 	= 4
- 		end 	= 6
- 		
-		for x in range(30): #30 bytes of data
-			tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
-			begin = end
-			end = end + 2
-			tag.index = tag.index + 1
-		
-		tag.wordPtr = tag.wordPtr + 16	
 
 	def updateEntry(self):
 		tag.entry = (tag.time, tag.wispID, tag.tagType, tag.tmp, tag.sensorData, tag.snr, tag.rssi)
