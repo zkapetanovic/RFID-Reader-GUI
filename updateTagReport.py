@@ -57,12 +57,11 @@ class UpdateTagReport:
 
 		#Unknown tag type
 		else:
-			#tag.sensorData = "N/A"
+			tag.sensorData = "N/A"
 			#tag.camInfo = 0
 			self.updateEntry()
 
-	def accelerometer(self, alpha):
-		
+	def accelerometer(self, alpha):	
 		percentage = alpha * 100 / 1024.
 		xData = int(tag.epc[6:10], 16)
 		yData = int(tag.epc[2:6], 16)
