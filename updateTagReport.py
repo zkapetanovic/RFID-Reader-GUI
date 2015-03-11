@@ -11,6 +11,10 @@ import numpy as np
 import time
 
 class UpdateTagReport:
+	def __init__(self):
+		self.currentX, self.currentY, self.currentZ = 1, 1, 1
+		self.xCorrect, self.yCorrect, self.zCorrect = 0.87, 0.886, 1.034
+		
 	def parseData(self, epc, rssi, snr, time, readData):
 		tag.epc 			= epc	
 		tag.tmp 			= "%02X" % int(epc[0:24], 16)
@@ -61,21 +65,41 @@ class UpdateTagReport:
 			#tag.camInfo = 0
 			self.updateEntry()
 
-	def accelerometer(self, alpha):	
+
+	def accelerometer(self, alpha):		
 		percentage = alpha * 100 / 1024.
-		xData = int(tag.epc[6:10], 16)
-		yData = int(tag.epc[2:6], 16)
-		zData = int(tag.epc[10:14], 16)
-		tag.accelX = 100 - xData * percentage
-		tag.accelY = 100 - yData * percentage
-		tag.accelZ = zData * percentage
-		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (tag.accelX, tag.accelY, tag.accelZ)
+		x = int(tag.epc[7:11], 16)
+		y = int(tag.epc[3:7], 16)
+		z = int(tag.epc[11:15], 16)
+		
+		if x < 0 or x > 1024: x = 0
+		if y < 0 or y > 1024: y = 0
+		if z < 0 or z > 1024: z = 0
+		
+		x = 100.0 * x / 1024.0
+		y = 100.0 * y / 1024.0
+		z = 100.0 * z / 1024.0
+		
+		x = 100 - x
+		y = 100 - y
+		
+		if tag.tagType == "0B":
+			x = x * self.xCorrect;
+			y = y * self.yCorrect;
+			z = z * self.zCorrect;
+		
+		#tag.accelX = 100 - xData * percentage
+		#tag.accelY = 100 - yData * percentage
+		#tag.accelZ = zData * percentage
+		
+		self.currentX = self.currentX * alpha + x * (1-alpha)
+		self.currentY = self.currentY * alpha + y * (1-alpha)
+		self.currentZ = self.currentZ * alpha + y * (1-alpha)
+		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (self.currentX, self.currentY, self.currentZ)
 
-		print str(xData) + str(" ") + str(yData) + str(" ") +  str(zData)
-		print str(tag.accelX) + str(" ") +  str(tag.accelY) + str(" ") +  str(tag.accelZ)
-
+		
 		if tag.saturnThread:
-			tag.saturnThread.setAngles(xData, yData, zData)
+			tag.saturnThread.setAngles(self.currentX, self.currentY, self.currentZ)
 
 		self.updateEntry()
 
