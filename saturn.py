@@ -9,7 +9,7 @@ import Image
 import sys
 import math
 import os
-
+import numpy as np
 
 texture = [0 for x in range(2)]
 
@@ -117,13 +117,13 @@ class SaturnDemo(threading.Thread):
 			#self.angleY = y
 			#self.angleZ = z
 
-		xAccel = x - 50
-		yAccel = y - 50
-		zAccel = z - 50
+		xAccel = x - 50.
+		yAccel = y - 50.
+		zAccel = z - 50.
 
 		if zAccel != 0.0:
-			senseAngleX = float((180. / 3.14149) * math.atan(xAccel / zAccel))
-			senseAngleY = float(math.sin(zAccel) * (180. / 3.14149) * math.atan(yAccel / zAccel))
+			senseAngleX = float((180. / 3.14159) * np.arctan(xAccel / zAccel))
+			senseAngleY = float(np.sign(zAccel) * (180. / 3.14149) * np.arctan(yAccel / zAccel))
 
 		self.angleX = senseAngleX - self.viewAngleX
 		self.angleY = senseAngleY - self.viewAngleY

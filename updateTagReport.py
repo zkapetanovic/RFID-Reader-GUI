@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
  Created on Thursday July, 10, 2014
- @author Zerina Kapetanovic
+ @author Zerina Kapetanovice
 """
 
 import globals as tag
@@ -36,9 +36,9 @@ class UpdateTagReport:
 
 		#Accelerometer WISP
 		if tag.tagType == "0B" or tag.tagType == "0D":
-			if tag.tagType == "0B": alpha = 1.16
-			else: alpha = 1
-
+			#if tag.tagType == "0B": alpha = 1.16
+			#else: alpha = 1
+			alpha = 0.9
 			self.accelerometer(alpha)
 
 		#Temperature WISP
@@ -67,37 +67,33 @@ class UpdateTagReport:
 
 
 	def accelerometer(self, alpha):		
-		percentage = alpha * 100 / 1024.
-		x = int(tag.epc[7:11], 16)
-		y = int(tag.epc[3:7], 16)
-		z = int(tag.epc[11:15], 16)
-		
+		x = int(tag.epc[6:10], 16)
+		y = int(tag.epc[2:6], 16)
+		z = int(tag.epc[10:14], 16)
+
 		if x < 0 or x > 1024: x = 0
 		if y < 0 or y > 1024: y = 0
 		if z < 0 or z > 1024: z = 0
-		
+
 		x = 100.0 * x / 1024.0
 		y = 100.0 * y / 1024.0
 		z = 100.0 * z / 1024.0
 		
-		x = 100 - x
-		y = 100 - y
-		
+		x = 100. - x
+		y = 100. - y
+
 		if tag.tagType == "0B":
 			x = x * self.xCorrect;
 			y = y * self.yCorrect;
 			z = z * self.zCorrect;
-		
-		#tag.accelX = 100 - xData * percentage
-		#tag.accelY = 100 - yData * percentage
-		#tag.accelZ = zData * percentage
-		
+		print (self.currentX)
 		self.currentX = self.currentX * alpha + x * (1-alpha)
 		self.currentY = self.currentY * alpha + y * (1-alpha)
-		self.currentZ = self.currentZ * alpha + y * (1-alpha)
-		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (self.currentX, self.currentY, self.currentZ)
-
+		self.currentZ = self.currentZ * alpha + z * (1-alpha)
 		
+		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (self.currentX, self.currentY, self.currentZ)
+		tag.accelY, tag.accelX, tag.accelZ = self.currentY, self.currentX, self.currentZ
+
 		if tag.saturnThread:
 			tag.saturnThread.setAngles(self.currentX, self.currentY, self.currentZ)
 

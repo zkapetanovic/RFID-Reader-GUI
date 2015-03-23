@@ -18,11 +18,11 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.FileHandler('logfile.log'))
 
 args = None
-
+#192.168.10.100
 class readerConfig:
 	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, time = float(80),
-				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'WISP5pre',
-				 tari = 12500, reconnect = True, logfile = 'logfile.log'):
+				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'M4',
+				 tari = 0, reconnect = True, logfile = 'logfile.log'):
 
 		self.host 		= globals.host
 		self.port 		= port
