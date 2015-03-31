@@ -19,10 +19,11 @@ logger.addHandler(logging.FileHandler('logfile.log'))
 
 args = None
 #192.168.10.100
+#WISP5pre, 12500
 class readerConfig:
 	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, time = float(80),
-				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'M4',
-				 tari = 0, reconnect = True, logfile = 'logfile.log'):
+				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'WISP5pre',
+				 tari = 12500, reconnect = True, logfile = 'logfile.log'):
 
 		self.host 		= globals.host
 		self.port 		= port
@@ -65,26 +66,27 @@ class Reader(threading.Thread):
 				rssi 		  = tag['PeakRSSI'][0]
 				time 		  = tag['LastSeenTimestampUTC'][0]
 				snr 		  = "N/A"
-
+				
 				try:
 					opSpec	  = tag['OpSpecResult']['ReadData']
-					data = opSpec.encode("string_escape")
-					self.readData = data.replace('\\x', '')
-
+					data = opSpec.encode("hex_codec")
+					self.readData = data.replace('\\x', '') 
+					self.tagReport.parseData(epc, rssi, snr, time, self.readData)
 				except:
 					logger.error('Read CMD not excuted, cannot retrieve data')
-					#readData = 0
 				
 				'''
 				except KeyError as ke:
 					print(ke)
 					import ipdb; ipdb.set_trace()
 				'''
-				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))				
-				self.tagReport.parseData(epc, rssi, snr, time, self.readData)
+
+				#self.readData = 0
+				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))			
+				#self.tagReport.parseData(epc, rssi, snr, time, self.readData)
 
 		else:
-			#globals.tmp = "N/A"
+			globals.tmp = "N/A"
 			#logger.info('no tag seen')
 			return
 

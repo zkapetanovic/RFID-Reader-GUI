@@ -45,25 +45,26 @@ class UpdateTagReport:
 		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
 
 		#Camera
-		elif tag.tagType == "05": 
-			print ("entered elif")
+		elif tag.tagType == "CA": 
 			#log = [[tag.epc, tag.time]]
 			#fileHandle = open('camLog.txt', 'a')
 			#np.savetxt(fileHandle, log, '%10s')
 			#fileHandle.close()
-			if len(readData) == 60:
+			if tag.readData != 0:
 				self.imageCaptureReadCMD() 
 			else:
+				print ("Update Entry")
 				self.updateEntry()
+		
 
 		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
 		#	self.localization()
 
 		#Unknown tag type
-		else:
-			tag.sensorData = "N/A"
+		#else:
+		#	tag.sensorData = "N/A"
 			#tag.camInfo = 0
-			self.updateEntry()
+		#	self.updateEntry()
 
 
 	def accelerometer(self, alpha):		
@@ -86,7 +87,7 @@ class UpdateTagReport:
 			x = x * self.xCorrect;
 			y = y * self.yCorrect;
 			z = z * self.zCorrect;
-		print (self.currentX)
+
 		self.currentX = self.currentX * alpha + x * (1-alpha)
 		self.currentY = self.currentY * alpha + y * (1-alpha)
 		self.currentZ = self.currentZ * alpha + z * (1-alpha)
@@ -112,7 +113,6 @@ class UpdateTagReport:
 	#	self.lThread.start()
 
 	def imageCaptureReadCMD(self):
-		print ("Entered ReadCMD")
  		begin 	= 0
  		end 	= 2
  	
@@ -125,7 +125,6 @@ class UpdateTagReport:
 			
 			tag.wordPtr = tag.wordPtr + 15
 			print (tag.index)
-
 
 		self.updateEntry()
 			

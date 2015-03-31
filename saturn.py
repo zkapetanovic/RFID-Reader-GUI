@@ -7,7 +7,6 @@ from OpenGL.GL import *
 import threading
 import Image
 import sys
-import math
 import os
 import numpy as np
 

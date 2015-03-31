@@ -43,7 +43,7 @@ class RFID_Reader_App:
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
-		wispApp.clearButton.clicked.connect(self.clearTable)
+		wispApp.clearButton.clicked.connect(self.clearImage)
 
 
 	def readerSelect(self):
@@ -161,8 +161,8 @@ class RFID_Reader_App:
 
 			tag.x = str("%s" % wispApp.xVal.toPlainText())
 			tag.y = str("%s" % wispApp.xVal.toPlainText())
-			
-			if tag.index >= 25199 or int(tag.epc[2:4], 16) == 255:		
+			print (tag.index)
+			if tag.index >= 25199:	
 				wispApp.statusLabel.setText("Status: Image captured")
 				for i in tag.imArray:
 					if i <= tag.x: 	i = 0
@@ -179,18 +179,24 @@ class RFID_Reader_App:
 				image.imshow(mat_image)
 				wispApp.imageCanvas.draw()
 
+	def clearImage(self):
+		plt.cla()
+		plt.clf()
+		self.image.clear()
+		tag.imArray = [0 for x in range (25200)]
+		tag.index, tag.wordPtr = 0 , 0
 
 	def captureImageReadCMD(self):
 		tag.x = str("%s" % wispApp.xVal.toPlainText())
 		tag.y = str("%s" % wispApp.yVal.toPlainText())
-		if tag.tagType == "05":
+		if tag.tagType == "CA":
 			wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
 			rows 	= 144
 			columns = 175
 
 			tag.x = str("%s" % wispApp.xVal.toPlainText())
 			tag.y = str("%s" % wispApp.xVal.toPlainText())
-			
+
 			if tag.index >= 25200 or tag.wordPtr >= 12600:	
 				wispApp.statusLabel.setText("Status: Image captured")
 				for i in tag.imArray:
@@ -201,12 +207,15 @@ class RFID_Reader_App:
 				plt.clf()
 				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
 				plt.gray()			
-				image = wispApp.image.add_subplot(111)
-				image.clear()
+				self.image = wispApp.image.add_subplot(111)
+				self.image.clear()
 				ax = wispApp.image.gca()
 				ax.set_axis_off()
-				image.imshow(mat_image)
+				self.image.imshow(mat_image)
 				wispApp.imageCanvas.draw()
+				tag.index, tag.wordPtr = 0, 0
+
+
 def main():
 	app = QtGui.QApplication(sys.argv)
 	global wispApp 
