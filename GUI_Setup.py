@@ -16,7 +16,7 @@ class GUI_Setup(QtGui.QMainWindow):
 	def __init__(self):
 		super(GUI_Setup, self).__init__()
 		self.initUI()
-		self.resize(1190, 530)
+		self.resize(1190, 560)
 
 	def initUI(self):
 
@@ -26,28 +26,20 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.mainTable.setFont(QFont('Courier New', 8))
 		self.mainTable.setHorizontalHeaderLabels(('TIME', 'WISP ID', 'TAG TYPE', 'EPC', 'SENSOR DATA', 'SNR', 'RSSI'))
 		self.mainTable.horizontalHeader().setStretchLastSection(True)
-		self.mainTable.setGeometry(10, 120, 700, 330)
+		self.mainTable.setGeometry(10, 160, 700, 330)
 
 		#### Buttons ####
 		self.startButton = QtGui.QPushButton('Start', self)
 		self.startButton.setObjectName("Start")
-		self.startButton.setGeometry(30, 470, 100, 30)
+		self.startButton.setGeometry(30, 500, 100, 30)
 
 		self.pauseButton = QtGui.QPushButton('Pause', self)
-		self.pauseButton.setObjectName("Pause")
-		self.pauseButton.setGeometry(140, 470, 100, 30)
+		self.pauseButton.setObjectName("Stop")
+		self.pauseButton.setGeometry(140, 500, 100, 30)
 
 		self.clearButton = QtGui.QPushButton('Clear Image', self)
 		self.clearButton.setObjectName("Clear")
-		self.clearButton.setGeometry(250, 470, 100, 30)
-
-		self.saturnButton = QtGui.QPushButton('Saturn', self)
-		self.saturnButton.setObjectName("Saturn")
-		self.saturnButton.setGeometry(360, 470, 100, 30)
-
-		self.local3DButton = QtGui.QPushButton('Localization', self)
-		self.local3DButton.setObjectName("Localization")
-		self.local3DButton.setGeometry(490, 470, 100, 30)
+		self.clearButton.setGeometry(250, 500, 100, 30)
 
 		#### Accelerometer ####
 		self.xAccel = QtGui.QLabel(self)
@@ -84,45 +76,113 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.image = Figure()
 		self.imageCanvas = FigureCanvas(self.image)
 
+		############################### CONFIG TABS #############################
 
-		########## Readers ##########
-		self.readerFrame = QtGui.QFrame(self)
-		self.readerFrame.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
-		self.readerFrame.setLineWidth(4)
-		self.readerFrame.setGeometry(10, 22, 700, 90)
-		
-		self.readerLabel = QtGui.QLabel("<b>Reader Select</b>:", self)
-		self.readerLabel.setGeometry(10, 3, 110, 20)
-		self.readerLabel.setFont(QFont('Arial', 12))
-		
-		self.usrpSelect = QtGui.QRadioButton("USRP", self)
-		self.usrpSelect.setGeometry(15, 28, 100, 20)
-		self.usrpSelect.setObjectName("usrp")
-		self.usrpSelect.setFont(QFont('Arial', 10))
-		
-		self.impinjSelect = QtGui.QRadioButton("Impinj", self)
-		self.impinjSelect.setGeometry(15, 55, 100, 20)
-		self.impinjSelect.setObjectName("impinj")
-		self.impinjSelect.setFont(QFont('Arial', 10))
-		
-		self.ipLabel = QtGui.QLabel("IP Address:", self)
-		self.ipLabel.setGeometry(55, 87, 100, 10)
+		########## Reader Config ##########	
+		self.tabs2Frame = QtGui.QFrame(self)
+		self.tabs2Frame.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+		self.tabs2Frame.setLineWidth(4)
+		self.tabs2Frame.setGeometry(10, 35, 700, 120)
+
+		tabs2 = QtGui.QTabWidget(self)
+		tabs2.resize(650, 160)
+		tabs2.move(10, 7)
+		readerTab 	= QtGui.QWidget()
+		readerTab.setFont(QFont('Arial', 12))
+
+		tabs2.addTab(readerTab, "Configure Reader")
+
+		## Select Reader ##
+		self.readerSelectLabel = QtGui.QLabel("Select Reader:  ", self)
+		self.readerSelectLabel.setFont(QFont('Arial', 10))
+		self.readerSelect = QtGui.QComboBox(self)
+		self.readerSelect.setEditable(False)
+		self.readerSelect.setFixedHeight(25)
+		self.readerSelect.setFixedWidth(80)
+		self.readerSelect.setFont(QFont('Arial', 10))
+		self.readerSelect.addItem('Impinj')
+		self.readerSelect.addItem('USRP')
+
+		## Select Modulation and Tari ##
+		self.modLabel = QtGui.QLabel("    Reader Settings:        ")
+		self.modLabel.setFont(QFont('Arial', 10))
+		self.modSelect = QtGui.QComboBox(self)
+		self.modSelect.setEditable(False)
+		self.modSelect.setFixedHeight(25)
+		self.modSelect.setFixedWidth(130)
+		self.modSelect.setFont(QFont('Arial', 10))
+		self.modSelect.addItem('Modulation : Tari')
+		self.modSelect.addItem('FM0 : 7140')
+		self.modSelect.addItem('M4 : 25000')
+		self.modSelect.addItem('WISP5pre : 12500')
+		self.modSelect.addItem('WISP5 : 7140')
+
+		## Select Host ##
+		self.ipLabel = QtGui.QLabel("    Host IP:    ", self)
 		self.ipLabel.setFont(QFont('Arial', 10))
-		
 		self.ipAddress = QtGui.QTextEdit(self)
-		self.ipAddress.setGeometry(140, 80, 200, 25)
+		self.ipAddress.setFixedHeight(20)
+		self.ipAddress.setFixedWidth(150)
+		self.ipAddress.setFont(QFont('Arial', 10))
 		self.ipAddress.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 		
+		## Connect to reader ##
 		self.connectButton = QtGui.QPushButton("Connect", self)
-		self.connectButton.setGeometry(600, 75, 100, 30)
+		self.connectButton.setFixedHeight(25)
+		self.connectButton.setFixedWidth(75)
+		self.connectButton.setFont(QFont('Arial', 10))
 		self.connectButton.setObjectName("readerSelect")
+
+		readerLayout = QtGui.QGridLayout()
+		readerLayout.setRowMinimumHeight(0, 20)
+		readerLayout.setHorizontalSpacing(0)
+		readerLayout.addWidget(self.readerSelectLabel, 0, 0)
+		readerLayout.addWidget(self.readerSelect, 0, 1)
+		readerLayout.addWidget(self.modLabel, 0, 2)
+		readerLayout.addWidget(self.modSelect, 0, 3)
+		readerLayout.addWidget(self.ipLabel, 0, 4)
+		readerLayout.addWidget(self.ipAddress, 0, 5)
+		readerLayout.addWidget(self.connectButton, 2, 0)
+		readerTab.setLayout(readerLayout)
+
+		######### Saturn Config #########
+		saturnTab = QtGui.QWidget()
+		saturnTab.setFont(QFont('Arial', 12))
+		tabs2.addTab(saturnTab, "Configure Saturn")
+
+		self.saturnButton = QtGui.QPushButton('Display Saturn', self)
+		self.saturnButton.setObjectName("Saturn")
+		self.saturnButton.setFixedHeight(25)
+		self.saturnButton.setFixedWidth(95)
+		self.saturnButton.setFont(QFont('Arial', 10))
+
+		self.caliButton = QtGui.QPushButton('Calibrate', self)
+		self.caliButton.setObjectName("Calibrate")
+		self.caliButton.setGeometry(580, 500, 100, 30)
+		self.caliButton.setFixedHeight(25)
+		self.caliButton.setFixedWidth(75)
+		self.caliButton.setFont(QFont('Arial', 10))
+
+		self.xFlip = QtGui.QCheckBox("Flip X", self)
+		self.yFlip = QtGui.QCheckBox("Flip Y", self)
+		self.xFlip.setFont(QFont('Arial', 10))
+		self.yFlip.setFont(QFont('Arial', 10))
+		self.xFlip.setChecked(False)
+		self.yFlip.setChecked(False)
+
+		saturnLayout = QtGui.QGridLayout()
+		saturnLayout.setRowMinimumHeight(0, 20)
+		saturnLayout.addWidget(self.caliButton, 1, 0)
+		saturnLayout.addWidget(self.saturnButton, 2, 0)
+		saturnLayout.addWidget(self.xFlip, 0, 0)
+		saturnLayout.addWidget(self.yFlip, 0, 1)
+		saturnTab.setLayout(saturnLayout)
+		################################ Demo Tabs #############################
 
 		######### Graph ##########		
 		self.figure = plt.figure()
 		self.canvas = FigureCanvas(self.figure)
-
-		######### Tabs ##########
-
+		
 		#Image Capture
 		self.imageLayout = QtGui.QGridLayout()
 		self.imageLayout.setHorizontalSpacing(30)
@@ -146,73 +206,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		accelLayout.addWidget(self.zAccel, 0, 5)
 		accelLayout.addWidget(self.sliderZ, 1, 5)
 		accelLayout.addWidget(self.xAccel, 5, 3, QtCore.Qt.AlignCenter)
-		accelLayout.addWidget(self.sliderX, 6, 3)
-		
-		#Localization
-		self.numPoints = QtGui.QComboBox(self)
-		self.numPoints.setEditable(False)
-		self.numPoints.addItem('2')
-		self.numPoints.addItem('3')
-		self.numPoints.addItem('4')
-
-		self.ch1Label = QtGui.QLabel("Channel 1:", self)
-		self.ch1Label.setFont(QFont('Arial', 10))
-
-		self.ch2Label = QtGui.QLabel("Channel 2:", self)
-		self.ch2Label.setFont(QFont('Arial', 10))
-
-		self.ch3Label = QtGui.QLabel("Channel 3:", self)
-		self.ch3Label.setFont(QFont('Arial', 10))
-
-		self.ch4Label = QtGui.QLabel("Channel 4:", self)
-		self.ch4Label.setFont(QFont('Arial', 10))
-
-		self.ch1 = QtGui.QTextEdit(self)
-		self.ch1.setFixedHeight(25)
-		self.ch1.setFixedWidth(60)
-		self.ch1.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch2 = QtGui.QTextEdit(self)
-		self.ch2.setFixedHeight(25)
-		self.ch2.setFixedWidth(60)
-		self.ch2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch3 = QtGui.QTextEdit(self)
-		self.ch3.setFixedHeight(25)
-		self.ch3.setFixedWidth(60)
-		self.ch3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.ch4 = QtGui.QTextEdit(self)
-		self.ch4.setFixedHeight(25)
-		self.ch4.setFixedWidth(60)
-		self.ch4.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-		self.pointsLabel = QtGui.QLabel("Select Number of Points:", self)
-		self.pointsLabel.setFont(QFont('Arial', 10))
-
-		self.chanLabel = QtGui.QLabel("Channel Coordinates (x, y, z):", self)
-		self.chanLabel.setFont(QFont('Arial', 10))
-
-		self.localTable = QtGui.QTableWidget(0, 2, self)
-		self.localTable.setFont(QFont('Courier New', 10))
-		self.localTable.horizontalHeader().setStretchLastSection(True)
-		self.localTable.setHorizontalHeaderLabels(('WISP ID', 'Localization (x, y, z)'))
-		self.localTable.setFixedWidth(432)
-
-		localLayout = QtGui.QGridLayout()
-		localLayout.setRowMinimumHeight(0, 20)
-		localLayout.addWidget(self.pointsLabel, 0, 0)
-		localLayout.addWidget(self.numPoints, 0, 1)
-		localLayout.addWidget(self.chanLabel, 1, 0)
-		localLayout.addWidget(self.ch1Label, 2, 0)
-		localLayout.addWidget(self.ch2Label, 3, 0)
-		localLayout.addWidget(self.ch3Label, 4, 0)
-		localLayout.addWidget(self.ch4Label, 5, 0)
-		localLayout.addWidget(self.ch1, 2, 1)
-		localLayout.addWidget(self.ch2, 3, 1)
-		localLayout.addWidget(self.ch3, 4, 1)
-		localLayout.addWidget(self.ch4, 5, 1)
-		localLayout.addWidget(self.localTable, 6, 0)
+		accelLayout.addWidget(self.sliderX, 6, 3)	
 
 		#### TABS ####
 		tabFrame = QtGui.QFrame(self)
@@ -226,24 +220,21 @@ class GUI_Setup(QtGui.QMainWindow):
 			
 		accelTab 	= QtGui.QWidget()
 		tempTab 	= QtGui.QWidget()
-		localTab 	= QtGui.QWidget()
 		imageTab 	= QtGui.QWidget()
 
-		tabs.addTab(localTab, "Localization")
 		tabs.addTab(imageTab, "Image Capture")
 		tabs.addTab(accelTab, "Accelerometer")
 		tabs.addTab(tempTab, "Temperature")
 		
 		accelTab.setLayout(accelLayout)
 		tempTab.setLayout(self.tempLayout)
-		localTab.setLayout(localLayout)
 		imageTab.setLayout(self.imageLayout)
 
 		########## Stylesheet ##########
 		Stylesheet = """
 		QMainWindow {border: 2px solid #262323;}
 		QPushButton {border: 1px solid black; border-radius: 6px;}
-		QPushButton#Stop {border: 1px solid #F21B34; border-radius: 6px;}
+		QPushButton#Stop {border: 1px solid red; border-radius: 6px;}
 		QPushButton#Start {border: 1px solid #5BD463; border-radius: 6px;}
 		QTabWidget:pane{border: 1px sp;od #C2C7CB;}
 		QTabWidget:tab-bar{left: 0px; border: none;}

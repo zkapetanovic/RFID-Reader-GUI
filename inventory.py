@@ -9,44 +9,47 @@ from sllurp.llrp_proto import LLRPROSpec, ModeIndex_Name2Type
 from twisted.internet import reactor, defer
 
 from updateTagReport import UpdateTagReport
-import globals 
 
 tagsSeen = 0
-
 logger = logging.getLogger('sllurp')
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.FileHandler('logfile.log'))
 
-args = None
-#192.168.10.100
-#WISP5pre, 12500
-class readerConfig:
-	def __init__(self, host = globals.host, port = llrp.LLRP_PORT, time = float(80),
-				 debug = True, every_n = 1, antennas = '1', tx_power = 61, modulation = 'WISP5pre',
-				 tari = 12500, reconnect = True, logfile = 'logfile.log'):
-
-		self.host 		= globals.host
-		self.port 		= port
-		self.time 		= time
-		self.debug 		= debug
-		self.every_n	= every_n
-		self.antennas 	= antennas
-		self.tx_power	= tx_power
-		self.modulation = modulation
-		self.tari		= tari
-		self.reconnect  = reconnect
-		self.logfile	= logfile
 
 class Reader(threading.Thread):
-	def __init__(self):
+	def __init__(self, tagReport, wispApp):
 		threading.Thread.__init__(self)
-		impinj = reactor
-		self.impinj = impinj
-		self.tagReport = UpdateTagReport()
-		self.readData = 0
+		impinj 			= reactor
+		self.impinj 	= impinj
+		self.tagReport 	= tagReport
+		self.wispApp 	= wispApp
+		self.readData 	= 0
 
 	def run(self):
 		self.initReader() 
+
+	def readerConfig(self):
+		'''Function to get reader settings from user'''
+		host 		= str("%s" % self.wispApp.ipAddress.toPlainText())
+		modtari 	= str("%s" % self.wispApp.modSelect.currentText())
+		modtari 	= modtari.split(" : ") 
+		modulation 	= str(modtari[0])
+		tari 		= int(modtari[1])
+
+		settings = {'modulation' : modulation,
+					'tari'		 : tari,
+					'port'		 : llrp.LLRP_PORT, 
+					'time'		 : float(80),
+					'debug'		 : True, 
+					'every_n'	 : 1,
+					'reconnect'  : True,
+					'logfile' 	 : 'logfile.log',
+					'tx_power' 	 : 61, 
+					'antennas'	 : '1', 
+					'host'	 	 : host
+					}
+		
+		return settings
 
 	def politeShutdown(self, factory):
 		return factory.politeShutdown()
@@ -61,81 +64,62 @@ class Reader(threading.Thread):
 			
 		if len(tags):
 			for tag in tags:
-				tagsSeen 	 += tag['TagSeenCount'][0]
+				tagsSeen 	  += tag['TagSeenCount'][0]
 				epc 		  = tag['EPC-96']
 				rssi 		  = tag['PeakRSSI'][0]
 				time 		  = tag['LastSeenTimestampUTC'][0]
 				snr 		  = "N/A"
-				
-				try:
-					opSpec	  = tag['OpSpecResult']['ReadData']
-					data = opSpec.encode("hex_codec")
-					self.readData = data.replace('\\x', '') 
-					self.tagReport.parseData(epc, rssi, snr, time, self.readData)
-				except:
-					logger.error('Read CMD not excuted, cannot retrieve data')
-				
-				'''
-				except KeyError as ke:
-					print(ke)
-					import ipdb; ipdb.set_trace()
-				'''
 
-				#self.readData = 0
+				self.readData = 0
 				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))			
-				#self.tagReport.parseData(epc, rssi, snr, time, self.readData)
+				self.tagReport.getData(epc, rssi, snr, time, self.readData)
 
-		else:
-			globals.tmp = "N/A"
-			#logger.info('no tag seen')
-			return
 
 	def access (self, proto):
-	    readSpecParam = None
-	    readSpecParam = {
+		'''Function to configure read and write parameters'''
+		readSpecParam = None
+		readSpecParam = {
 	        'OpSpecID': 0,
-	        'MB': 0, 
-	        'WordPtr': globals.wordPtr,
+	        'MB': 0, 					
+	        'WordPtr': globals.wordPtr, 
 	        'AccessPassword': 0,
-	        'WordCount': 15
+	        'WordCount': 15 
 	        }
 	    
-	    proto.startAccess(readWords = readSpecParam) #removed return
+		proto.startAccess(readWords = readSpecParam) #removed return
 	    #tag.retreive = 0
 	    #return proto.startAccess(readWords=readSpecParam)
 
 
 	def initReader(self):
-		global args
-		args = readerConfig()
+		args = self.readerConfig()
+		enabled_antennas = map(lambda x: int(x.strip()), args['antennas'].split(','))
 
-		enabled_antennas = map(lambda x: int(x.strip()), args.antennas.split(','))
-
-		self.factory = llrp.LLRPClientFactory(duration = args.time,
-								report_every_n_tags = args.every_n,
-								antennas = enabled_antennas,
-								tx_power = args.tx_power,
-								modulation = args.modulation,
-								tari = args.tari,
-								start_inventory = True,
-								disconnect_when_done = (args.time > 0),
-								reconnect = args.reconnect,
+		self.factory = llrp.LLRPClientFactory(
+								duration			 = args['time'],
+								report_every_n_tags  = args['every_n'],
+								antennas 			 = enabled_antennas,
+								tx_power 			 = args['tx_power'],
+								modulation 			 = args['modulation'],
+								tari 				 = args['tari'],
+								start_inventory 	 = True,
+								disconnect_when_done = (args['time'] > 0),
+								reconnect 			 = args['reconnect'],
 								tag_content_selector = {
-									'EnableROSpecID' : True,
-									'EnableSpecIndex' : True,
+									'EnableROSpecID' 				 : True,
+									'EnableSpecIndex' 				 : True,
 									'EnableInventoryParameterSpecID' : True,
-									'EnableAntennaID' : True,
-									'EnableChannelIndex' : False,
-									'EnablePeakRRSI' : True,
-									'EnableFirstSeenTimestamp' : False,
-									'EnableLastSeenTimestamp' : True,
-									'EnableTagSeenCount' : True,
-									'EnableAccessSpecID' : True 
+									'EnableAntennaID' 				 : True,
+									'EnableChannelIndex' 			 : False,
+									'EnablePeakRRSI' 				 : True,
+									'EnableFirstSeenTimestamp' 		 : False,
+									'EnableLastSeenTimestamp' 		 : True,
+									'EnableTagSeenCount' 			 : True,
+									'EnableAccessSpecID' 			 : True 
 									})
 
-		self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
+		#self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
 		self.factory.addTagReportCallback(self.tagReportCallback)
-		
-		reactor.connectTCP(args.host, args.port, self.factory)
+		reactor.connectTCP(args['host'], args['port'], self.factory)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()

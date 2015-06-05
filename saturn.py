@@ -20,11 +20,10 @@ class SaturnDemo(threading.Thread):
 
 		self.diskVertexX = []
 		self.diskVertexY = []
-		
 
 		#Initial rotation
-		self.defViewAngleX = 0
-		self.defViewAngleY = 90
+		self.defViewAngleX = 90
+		self.defViewAngleY = 0
 
 		self.viewAngleX = self.defViewAngleX
 		self.viewAngleY = self.defViewAngleY
@@ -35,11 +34,10 @@ class SaturnDemo(threading.Thread):
 	def run(self):
 		self.drawInit()
 
-
 	def drawInit(self):
 		glutInit(())
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE)
-		glutInitWindowSize(700, 700)
+		glutInitWindowSize(600, 600)
 		glutCreateWindow("Saturn Demo")
 
 		self.setLight()
@@ -51,10 +49,8 @@ class SaturnDemo(threading.Thread):
 		glEnable(GL_BLEND)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-
-
 		#Planet
-		glGenTextures(4, texture)
+		glGenTextures(2, texture)
 		glBindTexture(GL_TEXTURE_2D, texture[0])
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
@@ -67,7 +63,6 @@ class SaturnDemo(threading.Thread):
 			ix, iy, image = img.size[0], img.size[1], img.tostring("raw", "RGBX", 0, -1)
 
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
-
 
 		self.quadObj = gluNewQuadric()
 		gluQuadricTexture(self.quadObj, GL_TRUE)
@@ -121,7 +116,7 @@ class SaturnDemo(threading.Thread):
 		zAccel = z - 50.
 
 		if zAccel != 0.0:
-			senseAngleX = float((180. / 3.14159) * np.arctan(xAccel / zAccel))
+			senseAngleX = float((180. / 3.14149) * np.arctan(xAccel / zAccel))
 			senseAngleY = float(np.sign(zAccel) * (180. / 3.14149) * np.arctan(yAccel / zAccel))
 
 		self.angleX = senseAngleX - self.viewAngleX

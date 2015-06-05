@@ -15,44 +15,59 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import sys, threading, time
-import pkg_resources			#SLLURP needs this....idk why
+import pkg_resources
 
 ### MODULES ###
 from GUI_Setup import GUI_Setup
 from inventory import Reader
 from updateTagReport import UpdateTagReport
 from saturn import SaturnDemo
-#from localThread import localThread
-import globals as tag
+
 
 
 class RFID_Reader_App:
-	def __init__(self):
-		
-		tag.impinjThread = Reader()
-		tag.saturnThread = SaturnDemo()
+	def __init__(self, xcorr = 0.87, ycorr = 0.886, zcorr = 1.034):
+
+		self.xcorr = xcorr
+		self.zcorr = zcorr
+		self.ycorr = ycorr
+
+		self.saturnThread = SaturnDemo()
+		self.tagReport = UpdateTagReport(self.saturnThread, wispApp)
+		self.impinjThread = Reader(self.tagReport, wispApp)
+
 		self.usrpStart = False
 		self.impinjStart = False
-
 		self.runStarted = 0
 		self.pause = 0
 
 		wispApp.startButton.clicked.connect(self.start)
-		#wispApp.local3DButton.clicked.connect(self.initLocalization)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
 		wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
 		wispApp.clearButton.clicked.connect(self.clearImage)
+		wispApp.caliButton.clicked.connect(self.calibrate)
 
 
 	def readerSelect(self):
-		if wispApp.impinjSelect.isChecked() == True:
+		if wispApp.readerSelect.currentText() == "Impinj":
 			self.impinjStart = True
-			tag.host = str("%s" % wispApp.ipAddress.toPlainText())
-			print tag.host
-		elif wispApp.usrpSelect.isChecked() == True:
+			host, modulation, tari = self.getReaderConfig()
+			if modulation == "Modulation":
+				modulation = 'WISP5'
+				tari = 25000
+			print str("Reader: ") + str("Impinj, ") + str("Host: ") + str(host)
+			print str("Modulation: ") + str(modulation) + (" Tari: ") + str(tari)
+		elif wispApp.readerSelect.currentText() == "USRP":
 			self.usrpStart = True
+			print str("Reader: ") + str("USRP, ") + str("Host: ") + str("N/A")
+
+	def getReaderConfig(self):
+		host = str("%s" % wispApp.ipAddress.toPlainText())
+		settings = str("%s" % wispApp.modSelect.currentText())
+		settings = settings.split(" : ")
+		return host, settings[0], settings[1]
 
 
 	def start(self):
@@ -60,39 +75,45 @@ class RFID_Reader_App:
 			self.runStarted = 1
 			self.timer = QtCore.QTimer()
 			self.timer.timeout.connect(self.updateGUI)
-			self.timer.timeout.connect(self.captureImageReadCMD)
+			self.timer.timeout.connect(self.captureImage)
 			self.timer.timeout.connect(self.updateTemp)
 			self.timer.timeout.connect(self.updateAccel)
 			self.timer.start(100)
 			self.initReader()
 
 		if self.pause == 1:
-			tag.impinjThread.factory.resumeInventory()
+			self.impinjThread.factory.resumeInventory()
 			self.pause = 0
 
 
 	def stop(self):
-		tag.impinjThread.impinj.stop()
+		self.impinjThread.impinj.stop()
 		self.timer.stop()
 
-
 	def pauseRun(self):
-		tag.impinjThread.factory.pauseInventory()
+		self.impinjThread.factory.pauseInventory()
 		self.pause = 1
 
-	def clearTable(self):
+	def clearImage(self):
 		tag.data = []
 		tag.idEntry = []
 		tag.newRow = 0
 		tag.entryCount = 0
 		wispApp.mainTable.clearContents()		
 
+	def calibrate(self):
+		accelX, accelY, accelZ = self.tagReport.updateAccel()
+		self.xcorr = 50.0 / (accelX / self.xcorr)
+		self.ycorr = 50.0 / (accelY / self.ycorr)
+		self.zcorr = 41.0 / (accelZ / self.zcorr)
+		
+		self.tagReport.quickAccelCorrection(self.xcorr, self.ycorr, self.zcorr)
 
 	def initReader(self):
 		if self.impinjStart == True:
-			tag.impinjThread.daemon = True
+			self.impinjThread.daemon = True
 			wispApp.statusLabel.setText("<b>Status</b>: Charging")
-			tag.impinjThread.start()
+			self.impinjThread.start()
 		elif self.usrpStart == True:
 			global usrp_tb
 			self.usrp_tb = my_top_block()
@@ -100,83 +121,74 @@ class RFID_Reader_App:
 
 
 	def initSaturn(self):
-		tag.saturnThread.daemon = True
-		tag.saturnThread.start()
-
-	#def initLocalization(self):
-	#	self.thread = localThread()
-	#	self.thread.daemon = True
-	#	self.thread.start()
+		self.saturnThread.daemon = True
+		self.saturnThread.start()
 
 
 	############### Update GUI ##############
 	def updateGUI(self):
+		data, idEntry, newRow, entryCount = self.tagReport.updateEntry()
+		tagType, wispID = self.tagReport.updateTagReport()
 		lastRow = wispApp.mainTable.rowCount()
-		wispApp.mainTable.setRowCount(tag.newRow)
-		wispApp.mainTable.resizeColumnsToContents()
-		wispApp.mainTable.horizontalHeader().setStretchLastSection(True)
-		
-		if tag.tagType != "CA":
-			wispApp.statusLabel.setText("<b>Status</b>: Charging")
 
-		for fieldPos in range(7):
-			currentValue = tag.idEntry.get(tag.wispID)
-			values = tag.idEntry.values()
+		if wispID != None:
+			wispApp.mainTable.setRowCount(newRow)
+			wispApp.mainTable.resizeColumnsToContents()
+			wispApp.mainTable.horizontalHeader().setStretchLastSection(True)
+			
+			if tagType != "CA": 
+				wispApp.statusLabel.setText("<b>Status</b>: Charging")
 
-			if currentValue in values:
-				item = QtGui.QTableWidgetItem(str(tag.data[tag.entryCount - 1][fieldPos]))
-				wispApp.mainTable.setItem(currentValue, fieldPos, item)
-		
+			for fieldPos in range(7):
+				currentValue = idEntry.get(wispID)
+				values = idEntry.values()
+
+				if currentValue in values:
+					item = QtGui.QTableWidgetItem(str(data[entryCount - 1][fieldPos]))
+					wispApp.mainTable.setItem(currentValue, fieldPos, item)
+
 	
 	def updateTemp(self):
-		if tag.tagType == "0F" or tag.tagType == "0E":
+		tagType, plotData = self.tagReport.updateTemp()
+
+		if tagType == "0F" or tagType == "0E":
 			plt.clf()
 			plt.grid(True)
-			tag.plotData.append(tag.sensorData)
 			axes = wispApp.figure.add_subplot(111)
-			axes.plot(tag.plotData, color = 'red')
+			axes.plot(plotData, color = 'red')
 			plt.title('Temperature', fontsize = 12)
-			plt.ylim(-100, 100)
+			plt.ylim(-300, 100)
 			wispApp.canvas.draw()
 
 
 	def updateAccel(self):
-		if tag.tagType == "0B" or tag.tagType == "0D":
-			wispApp.xAccel.setText(" X '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelX)
-			wispApp.yAccel.setText(" Y '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelY)
-			wispApp.zAccel.setText(" Z '%' Tilt: " + "\n" + '%6.2f%%' % tag.accelZ)
+		tagType, wispID = self.tagReport.updateTagReport()
+		accelX, accelY, accelZ = self.tagReport.updateAccel()
+		
+		if tagType == "0B" or tagType == "0D":
+			wispApp.xAccel.setText(" X '%' Tilt: " + "\n" + '%6.2f%%' % accelX)
+			wispApp.yAccel.setText(" Y '%' Tilt: " + "\n" + '%6.2f%%' % accelY)
+			wispApp.zAccel.setText(" Z '%' Tilt: " + "\n" + '%6.2f%%' % accelZ)
 
-			wispApp.sliderY.setValue(tag.accelY)
-			wispApp.sliderX.setValue(tag.accelX)
-			wispApp.sliderZ.setValue(tag.accelZ)
+			wispApp.sliderY.setValue(accelY)
+			wispApp.sliderX.setValue(accelX)
+			wispApp.sliderZ.setValue(accelZ)
 
 
 	def captureImage(self):
-		tag.x = str("%s" % wispApp.xVal.toPlainText())
-		tag.y = str("%s" % wispApp.yVal.toPlainText())
-		if tag.tagType == "CA":
-			wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
-			rows 	= 144
-			columns = 175
-
-			tag.x = str("%s" % wispApp.xVal.toPlainText())
-			tag.y = str("%s" % wispApp.xVal.toPlainText())
-			print (tag.index)
-			if tag.index >= 25199:	
-				wispApp.statusLabel.setText("Status: Image captured")
-				for i in tag.imArray:
-					if i <= tag.x: 	i = 0
-					elif i > tag.y: i = 255
-
+		tagType, wispID = self.tagReport.updateTagReport()
+		
+		if tagType == "CA":
+			currImage, imageReady = self.tagReport.updateImage()
+			if imageReady == True:
 				plt.cla()
 				plt.clf()
-				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
 				plt.gray()			
 				image = wispApp.image.add_subplot(111)
 				image.clear()
 				ax = wispApp.image.gca()
 				ax.set_axis_off()
-				image.imshow(mat_image)
+				image.imshow(currImage)
 				wispApp.imageCanvas.draw()
 
 	def clearImage(self):

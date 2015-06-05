@@ -4,73 +4,127 @@
  @author Zerina Kapetanovice
 """
 
-import globals as tag
-#from localThread import localThread
 import sllurp.llrp as llrp
 import numpy as np
 import time
 
 class UpdateTagReport:
-	def __init__(self):
-		self.currentX, self.currentY, self.currentZ = 1, 1, 1
-		self.xCorrect, self.yCorrect, self.zCorrect = 0.87, 0.886, 1.034
-		
-	def parseData(self, epc, rssi, snr, time, readData):
-		tag.epc 			= epc	
-		tag.tmp 			= "%02X" % int(epc[0:24], 16)
-		tag.tagType 		= "%02X" % int(epc[0:2], 16)
-		tag.hwVersion 		= "%02X" % int(epc[18:20], 16)
-		tag.wispID 			= "%02X" % int(epc[0:2], 16)
-		tag.snr 			= snr
-		tag.rssi 			= rssi
-		tag.time 			= time	#microseconds
-		tag.readData		= readData
-	
-		if tag.hwVersion is None:
+	def __init__(self, saturnThread, wispApp):
+
+		#Entry
+		self.idEntry 	  = {}
+		self.entry 		  = ()
+		self.data 		  = []
+		self.entryCount	  = 0
+		self.sensorData   = None
+		self.newRow		  = 0
+
+		#Accel
+		self.currentX 	  = 1
+		self.currentY 	  = 1
+		self.currentZ 	  = 1
+		self.flipX		  = 0
+		self.flipY 		  = 0
+		self.xcorr		  = 0.87
+		self.ycorr		  = 0.886
+		self.zcorr		  = 1.034
+
+		#Tag Data
+		self.time 		  = None
+		self.tmp 		  = None
+		self.tagType 	  = None 
+		self.hwVersion 	  = None
+		self.wispID 	  = None
+		self.snr 		  = None
+		self.rssi 		  = None
+		self.readData 	  = None
+		self.epc 		  = None
+
+		#Temp
+		self.tempValue	  = None
+		self.plotData	  = []
+
+		#WISPCam
+		self.x 			  = 0
+		self.y  		  = 50
+		self.currSeq 	  = 0
+		self.prevSeq 	  = 0 					#previous EPC sequence
+		self.sequence 	  = 0 					#counter for the number of EPC sequences
+		self.index 		  = 0
+		self.dataCount 	  = 0
+		self.camTag 	  = 0
+		self.packetCount  = 0
+		self.epcPacket 	  = 0
+		self.getPacket	  = []
+		self.retrieve 	  = 0
+		self.readData 	  = 0
+		self.wordPtr	  = 0
+		self.mat_image 	  = None
+		self.imageReady   = False
+		self.imArray	  = [128 for x in range(25200)]
+
+		#Threads
+		self.saturnThread = saturnThread
+		self.wispApp 	  =  wispApp
+
+	def getData(self, epc, rssi, snr, time, readData):
+		self.epc 			= epc	
+		self.tmp 			= "%02X" % int(epc[0:24], 16)
+		self.tagType 		= "%02X" % int(epc[0:2], 16)
+		self.hwVersion 		= "%02X" % int(epc[18:20], 16)
+		self.wispID	 		= "%02X" % int(epc[0:2], 16)
+		self.snr 			= snr
+		self.rssi 			= rssi
+		self.time 			= time	#microseconds
+		self.readData		= readData
+
+		if self.epc != None:
+			self.parseData(self.tagType, self.hwVersion, self.wispID, self.epc)
+		else:
+			print ("Tag seen, no data recieved")
+
+	def parseData(self, tagType, hwVersion, wispID, epc):
+
+		if hwVersion is None:
 			return
 
 		#Store all tag IDs
-		if tag.wispID not in tag.idEntry.keys():
-			tag.idEntry[tag.wispID] = tag.newRow
-			tag.newRow += 1
+		if wispID not in self.idEntry.keys():
+			self.idEntry[wispID] = self.newRow
+			self.newRow += 1
 
 		#Accelerometer WISP
-		if tag.tagType == "0B" or tag.tagType == "0D":
-			#if tag.tagType == "0B": alpha = 1.16
-			#else: alpha = 1
-			alpha = 0.9
-			self.accelerometer(alpha)
+		if tagType == "0B" or tagType == "0D": 
+			self.getAccel(epc, tagType)
 
 		#Temperature WISP
-		elif tag.tagType == "0E" or tag.tagType == "0F": self.temperature()
+		elif tagType == "0E" or tagType == "0F": 
+			self.getTemp(epc, tagType)
 
-		#Camera
-		elif tag.tagType == "CA": 
-			#log = [[tag.epc, tag.time]]
-			#fileHandle = open('camLog.txt', 'a')
-			#np.savetxt(fileHandle, log, '%10s')
-			#fileHandle.close()
-			if tag.readData != 0:
-				self.imageCaptureReadCMD() 
-			else:
-				print ("Update Entry")
-				self.updateEntry()
-		
+		#WISPCam
+		elif tagType == "CA": 
+			#self.saveData()
+			#if tag.readData != 0:
+			self.imageCaptureEPC() 
+			#else:
+			#	self.updateEntry()
 
-		#elif tag.tagType == "SOMETHING FOR LOCALIZATION":
-		#	self.localization()
+		else: 
+			self.sensorData = None
+			self.updateEntry()
 
-		#Unknown tag type
-		#else:
-		#	tag.sensorData = "N/A"
-			#tag.camInfo = 0
-		#	self.updateEntry()
+	def saveData(self):
+		log = [[self.epx, self.time]]
+		fileHandle = open('camLog.txt', 'a')
+		np.savetxt(fileHandle, log, '%10s')
+		fileHandle.close()
 
+	def getAccel(self, epc, tagType):
+		alpha = 0.9
 
-	def accelerometer(self, alpha):		
-		x = int(tag.epc[6:10], 16)
-		y = int(tag.epc[2:6], 16)
-		z = int(tag.epc[10:14], 16)
+		x = int(epc[6:10], 16)
+		y = int(epc[2:6], 16)
+		z = int(epc[10:14], 16)
 
 		if x < 0 or x > 1024: x = 0
 		if y < 0 or y > 1024: y = 0
@@ -79,38 +133,64 @@ class UpdateTagReport:
 		x = 100.0 * x / 1024.0
 		y = 100.0 * y / 1024.0
 		z = 100.0 * z / 1024.0
+
+		self.accelerometer(alpha, x, y, z, tagType)
+
+	def getTemp(self, epc, tagType):
+		self.temp = int(tag.epc[2:6], 16)
+		self.temperature(self.temp)
+
+	def quickAccelCorrection(self, xcorr, ycorr, zcorr):
+		self.xcorr, self.ycorr, self.zcorr = xcorr, ycorr, zcorr
+		print str("New X correction factor: ") + str(self.xcorr)
+		print str("New Y correction factor: ") + str(self.ycorr)
+		print str("New Z correction factor: ") + str(self.zcorr)
+
+	def accelerometer(self, alpha, x, y, z, tagType):	
+		self.flipX, self.flipY = self.checkFlip()
+		if self.flipX == 2:
+			x = 100. - x
+			self.flipX = 0
+
+		if self.flipY == 2:
+			y = 100. - y
+			self.flipY = 0
+
+		if tagType == "0B":
+			x = x * self.xcorr
+			y = y * self.ycorr
+			z = z * self.zcorr
+
+		self.currentX = self.currentX * alpha + x * (1 - alpha)
+		self.currentY = self.currentY * alpha + y * (1 - alpha)
+		self.currentZ = self.currentZ * alpha + z * (1 - alpha)
 		
-		x = 100. - x
-		y = 100. - y
+		self.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (self.currentX, self.currentY, self.currentZ)
 
-		if tag.tagType == "0B":
-			x = x * self.xCorrect;
-			y = y * self.yCorrect;
-			z = z * self.zCorrect;
-
-		self.currentX = self.currentX * alpha + x * (1-alpha)
-		self.currentY = self.currentY * alpha + y * (1-alpha)
-		self.currentZ = self.currentZ * alpha + z * (1-alpha)
-		
-		tag.sensorData = '%6.2f%%, %6.2f%%, %6.2f%%' % (self.currentX, self.currentY, self.currentZ)
-		tag.accelY, tag.accelX, tag.accelZ = self.currentY, self.currentX, self.currentZ
-
-		if tag.saturnThread:
-			tag.saturnThread.setAngles(self.currentX, self.currentY, self.currentZ)
+		if self.saturnThread:
+			self.saturnThread.setAngles(self.currentX, self.currentY, self.currentZ)
 
 		self.updateEntry()
 
+	def checkFlip(self):
+		self.flipX = self.wispApp.xFlip.checkState()
+		self.flipY = self.wispApp.yFlip.checkState()
 
-	def temperature(self):
-		tag.temp = int(tag.epc[2:6], 16)
-		tempValue = ((tag.temp - 673) * 423.) / 1024.
-		tag.sensorData = tempValue
+		return self.flipX, self.flipY
+
+	def temperature(self, temp):
+		if temp < 0 or temp > 1024: temp = 0
+
+		self.tempValue = ((temp - 673.) * 423.) / 1024.
+		self.sensorData = self.tempValue
+		self.plotData.append(self.tempValue)
 		self.updateEntry()
 
-	#def localization(self):
-	#	self.lThread = localThread()
-	#	self.lThread.daemon = True
-	#	self.lThread.start()
+	def updateAccel(self):
+		return self.currentX, self.currentY, self.currentZ
+
+	def updateTemp(self):
+		return self.tagType, self.plotData
 
 	def imageCaptureReadCMD(self):
  		begin 	= 0
@@ -129,55 +209,48 @@ class UpdateTagReport:
 		self.updateEntry()
 			
 	def imageCaptureEPC(self):
-		tag.sensorData = int(tag.epc[2:24], 16)
-		tag.prevSeq = tag.currSeq
-		tag.currSeq = int(tag.epc[2:4], 16)
-		tag.index = 10 * (200 * tag.sequence + tag.currSeq)
+		self.wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
+		self.sensorData = int(self.epc[2:24], 16)
+		self.prevSeq = self.currSeq
+		self.currSeq = int(self.epc[2:4], 16)
+		self.index = 10 * (200 * self.sequence + self.currSeq)
 
-		#print tag.index, tag.sequence, tag.currSeq
+		if self.currSeq < self.prevSeq: self.sequence += 1
 
-		if tag.currSeq < tag.prevSeq: tag.sequence += 1
-
-		if tag.currSeq != 255 or tag.index <= 25199:
+		if self.currSeq != 255 or self.index <= 25199:
 			begin = 4
 			end = 6
 			for x in range(10):
-				tag.imArray[10 * (200 * tag.sequence + tag.currSeq) + x] = int(tag.epc[begin:end], 16)
+				self.imArray[10 * (200 * self.sequence + self.currSeq) + x] = int(self.epc[begin:end], 16)
 				begin = end
 				end = begin + 2
 
 			if x == 9: x = 0
-
-		######## Get missing data ########
-		if tag.currSeq == 255:
-			for i in range(len(tag.imArray)):
-				if tag.imArray[i] == -1:
-					tag.dataIndex.append(i) 					
-
-			j = 0
-			while j < len(tag.dataIndex):
-				missingPacket = tag.dataIndex[j] / 10.
-				tag.getPacket.append(missingPacket) 
-				j = j + 10
-			tag.retrieve = 1
-			print (tag.retrieve)
-
-		if tag.currSeq == 255 or tag.index >= 25199:
-			tag.sequence, tag.currSeq, tag.prevSeq, tag.count = 0, 0, 0, 0
-			return
-	
 		self.updateEntry()
+		print self.currSeq, self. index
+		if self.currSeq == 255 or self.index >= 25199:
+			#self.wispApp.statusLabel.setText("Status: Image captured")
+			self.configureImage(self.imArray)
+			self.sequence, self.currSeq, self.prevSeq, self.count = 0, 0, 0, 0
+			return
 
+	def configureImage(self, imArray):
+		rows, columns = 144, 175
+		for i in imArray:
+			if i <= self.x: 	i = 0
+			elif i > self.y: 	i = 255
+
+		self.mat_image = np.reshape(imArray, (rows, columns)) / 255.0
+		self.imageReady = True
+
+	def updateImage(self):
+		return self.mat_image, self.imageReady
+
+	def updateTagReport(self):
+		return self.tagType, self.wispID
 
 	def updateEntry(self):
-		tag.entry = (tag.time, tag.wispID, tag.tagType, tag.tmp, tag.sensorData, tag.snr, tag.rssi)
-		tag.entryCount += 1
-		tag.data.append(tag.entry)
-
-
-
-
-
-
-
-
+		self.entry = (self.time, self.wispID, self.tagType, self.tmp, self.sensorData, self.snr, self.rssi)
+		self.data.append(self.entry)
+		self.entryCount += 1
+		return self.data, self.idEntry, self.newRow, self.entryCount
