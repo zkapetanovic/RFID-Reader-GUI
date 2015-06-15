@@ -95,11 +95,7 @@ class RFID_Reader_App:
 		self.pause = 1
 
 	def clearImage(self):
-		tag.data = []
-		tag.idEntry = []
-		tag.newRow = 0
-		tag.entryCount = 0
-		wispApp.mainTable.clearContents()		
+		pass		
 
 	def calibrate(self):
 		accelX, accelY, accelZ = self.tagReport.updateAccel()
@@ -191,12 +187,6 @@ class RFID_Reader_App:
 				image.imshow(currImage)
 				wispApp.imageCanvas.draw()
 
-	def clearImage(self):
-		plt.cla()
-		plt.clf()
-		self.image.clear()
-		tag.imArray = [0 for x in range (25200)]
-		tag.index, tag.wordPtr = 0 , 0
 
 	def captureImageReadCMD(self):
 		tag.x = str("%s" % wispApp.xVal.toPlainText())
