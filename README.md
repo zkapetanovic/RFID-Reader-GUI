@@ -49,7 +49,7 @@ To get the demo started, follow these steps:
 6. At this point your reader should be connected and inventorying has started
 
 <h2>DEMO FEATURES</h2>
-With this application you can demo acceleromter and temperature data. Accelerometer data is demonstrated with the sliders under the Acceleromter tab and also with the Saturn Demo. Temperature data is displayed on a graph under the Temperature tab. 
+With this application you can demo accelerometer and temperature data. Accelerometer data is demonstrated with the sliders under the Acceleromter tab and also with the Saturn Demo. Temperature data is displayed on a graph under the Temperature tab. 
 
 <h3>SATURN DEMO CONFIGURATIONS</h3>
 1. Click the Saturn tab
