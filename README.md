@@ -63,7 +63,7 @@ With this application you can demo accelerometer and temperature data. Accelerom
 
 <h2>CURRENT ISSUES TO BE AWARE OF</h2>
 - Once an inventory has started the reader settings can no longer be changed. You must restart the application to make any changes.
-- If you do not pause inventory before closing the application your reader will contintue to run even though the application is closed
+- If you do not pause inventory before closing the application your reader will continue to run even though the application is closed
 - If you close the saturn demo after opening it, the entire application will close as well
 - If you enter the incorrect IP address and press start you will need to restart the application
 
