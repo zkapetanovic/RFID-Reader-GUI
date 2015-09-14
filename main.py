@@ -24,7 +24,6 @@ from updateTagReport import UpdateTagReport
 from saturn import SaturnDemo
 
 
-
 class RFID_Reader_App:
 	def __init__(self, xcorr = 0.87, ycorr = 0.886, zcorr = 1.034):
 
@@ -179,7 +178,8 @@ class RFID_Reader_App:
 			if imageReady == True:
 				plt.cla()
 				plt.clf()
-				plt.gray()			
+				plt.gray()		
+					
 				image = wispApp.image.add_subplot(111)
 				image.clear()
 				ax = wispApp.image.gca()
@@ -196,15 +196,14 @@ class RFID_Reader_App:
 			rows 	= 144
 			columns = 175
 
-			tag.x = str("%s" % wispApp.xVal.toPlainText())
-			tag.y = str("%s" % wispApp.xVal.toPlainText())
-
+			tag.x = 60
+			tag.y = 0
 			if tag.index >= 25200 or tag.wordPtr >= 12600:	
 				wispApp.statusLabel.setText("Status: Image captured")
+				print ("TEST")
 				for i in tag.imArray:
-					if i <= tag.x: 	i = 0
-					elif i > tag.y: i = 255
-
+					i = i * 20
+					print i
 				plt.cla()
 				plt.clf()
 				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
@@ -213,6 +212,7 @@ class RFID_Reader_App:
 				self.image.clear()
 				ax = wispApp.image.gca()
 				ax.set_axis_off()
+				print ("TEST1")
 				self.image.imshow(mat_image)
 				wispApp.imageCanvas.draw()
 				tag.index, tag.wordPtr = 0, 0

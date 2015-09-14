@@ -8,6 +8,8 @@ import sllurp.llrp as llrp
 import numpy as np
 import time
 
+
+from skimage import exposure
 class UpdateTagReport:
 	def __init__(self, saturnThread, wispApp):
 
@@ -227,7 +229,7 @@ class UpdateTagReport:
 
 			if x == 9: x = 0
 		self.updateEntry()
-		print self.currSeq, self. index
+		#print self.currSeq, self. index
 		if self.currSeq == 255 or self.index >= 25199:
 			#self.wispApp.statusLabel.setText("Status: Image captured")
 			self.configureImage(self.imArray)
@@ -236,11 +238,15 @@ class UpdateTagReport:
 
 	def configureImage(self, imArray):
 		rows, columns = 144, 175
-		for i in imArray:
-			if i <= self.x: 	i = 0
-			elif i > self.y: 	i = 255
-
+		x = 50
+		y = 0
+		
+		#for i in imArray:
+		#	if i >= x: i = 255
+		#	elif i < y: i =0
+		#	print i
 		self.mat_image = np.reshape(imArray, (rows, columns)) / 255.0
+		self.mat_image = exposure.equalize_hist(self.mat_image)
 		self.imageReady = True
 
 	def updateImage(self):

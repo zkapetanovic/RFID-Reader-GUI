@@ -1,0 +1,951 @@
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+connection failed: Connection was refused by other side: 61: Connection refused.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+Too few bytes (4) to unpack LLRP messageheader
+Too few bytes (2) to unpack LLRP messageheader
+pausing for 0 seconds
+Too few bytes (4) to unpack LLRP messageheader
+unexpected response DELETE_ACCESSSPEC_RESPONSE  when disabling ROSpec
+Too few bytes (2) to unpack LLRP messageheader
+Problem with READER_EVENT_NOTIFICATION message format: junk at end of message: 00 fb 00 04                                       ....
+'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "/Users/zerina/sllurp/sllurp/llrp.py", line 121, in __repr__
+    ret = llrp_data2xml(self.msgdict)
+  File "/Users/zerina/sllurp/sllurp/llrp_proto.py", line 2789, in llrp_data2xml
+    for p in msg:
+TypeError: 'NoneType' object is not iterable
+unexpected response None  when deleting ROSpec
+lost connection: 'NoneType' object has no attribute '__getitem__'
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+Too few bytes (4) to unpack LLRP messageheader
+Too few bytes (2) to unpack LLRP messageheader
+Problem with READER_EVENT_NOTIFICATION message format: junk at end of message: 00 fb 00 04                                       ....
+'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "/Users/zerina/sllurp/sllurp/llrp.py", line 121, in __repr__
+    ret = llrp_data2xml(self.msgdict)
+  File "/Users/zerina/sllurp/sllurp/llrp_proto.py", line 2789, in llrp_data2xml
+    for p in msg:
+TypeError: 'NoneType' object is not iterable
+unexpected response None  when deleting ROSpec
+lost connection: 'NoneType' object has no attribute '__getitem__'
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+Problem with READER_EVENT_NOTIFICATION message format: junk at end of message: 00 fb 00 04                                       ....
+'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "/Users/zerina/sllurp/sllurp/llrp.py", line 121, in __repr__
+    ret = llrp_data2xml(self.msgdict)
+  File "/Users/zerina/sllurp/sllurp/llrp_proto.py", line 2789, in llrp_data2xml
+    for p in msg:
+TypeError: 'NoneType' object is not iterable
+unexpected response None  when deleting AccessSpec
+Problem with READER_EVENT_NOTIFICATION message format: junk at end of message: 00 fb 00 04                                       ....
+'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "/Users/zerina/sllurp/sllurp/llrp.py", line 121, in __repr__
+    ret = llrp_data2xml(self.msgdict)
+  File "/Users/zerina/sllurp/sllurp/llrp_proto.py", line 2789, in llrp_data2xml
+    for p in msg:
+TypeError: 'NoneType' object is not iterable
+unexpected response None  when deleting ROSpec
+lost connection: 'NoneType' object has no attribute '__getitem__'
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+pausing for 0 seconds
+pausing for 0 seconds
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+Too few bytes (6) to unpack LLRP messageheader
+Too few bytes (4) to unpack LLRP messageheader
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+resuming
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+unexpected response DISABLE_ROSPEC_RESPONSE  when deleting AccessSpec
+message DELETE_ACCESSSPEC_RESPONSE received in unknown state!
+there should NOT be Deferreds left for DELETE_ACCESSSPEC_RESPONSE, but there are!
+pausing for 0 seconds
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Too few bytes (6) to unpack LLRP messageheader
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+connecting...
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+pausing for 0 seconds
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: [1]
+connected to ('169.254.128.56', 5084)
+requested modulation: FM0
+using reader mode: {'C': 0, 'MaxTari': 7140, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 0, 'MinTari': 7140, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory

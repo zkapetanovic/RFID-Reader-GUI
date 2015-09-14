@@ -5,7 +5,7 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 
 import threading
-import Image
+from PIL import Image
 import sys
 import os
 import numpy as np

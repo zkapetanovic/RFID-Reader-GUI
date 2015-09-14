@@ -103,7 +103,7 @@ class Reader(threading.Thread):
 								modulation 			 = args['modulation'],
 								tari 				 = args['tari'],
 								start_inventory 	 = True,
-								disconnect_when_done = (args['time'] > 0),
+								disconnect_when_done = False,
 								reconnect 			 = args['reconnect'],
 								tag_content_selector = {
 									'EnableROSpecID' 				 : True,
