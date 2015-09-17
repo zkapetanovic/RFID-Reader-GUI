@@ -63,7 +63,7 @@ class RFID_Reader_App:
 			print str("Reader: ") + str("USRP, ") + str("Host: ") + str("N/A")
 
 	def getReaderConfig(self):
-		host = str("%s" % wispApp.ipAddress.toPlainText())
+		host = str("%s" % wispApp.ipAddress.currentText())
 		settings = str("%s" % wispApp.modSelect.currentText())
 		settings = settings.split(" : ")
 		return host, settings[0], settings[1]
@@ -187,7 +187,7 @@ class RFID_Reader_App:
 				image.imshow(currImage)
 				wispApp.imageCanvas.draw()
 
-
+	################ FOR READ CMD ################
 	def captureImageReadCMD(self):
 		tag.x = str("%s" % wispApp.xVal.toPlainText())
 		tag.y = str("%s" % wispApp.yVal.toPlainText())

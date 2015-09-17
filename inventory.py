@@ -4,9 +4,11 @@ import pkg_resources
 import pprint
 from ast import literal_eval
 import threading
-import sllurp.llrp as llrp
-from sllurp.llrp_proto import LLRPROSpec, ModeIndex_Name2Type
 from twisted.internet import reactor, defer
+
+import sllurp.llrp as llrp
+from sllurp.llrp_proto import LLRPROSpec, Modulation_Name2Type, DEFAULT_MODULATION, \
+     Modulation_DefaultTari
 
 from updateTagReport import UpdateTagReport
 
@@ -30,7 +32,7 @@ class Reader(threading.Thread):
 
 	def readerConfig(self):
 		'''Function to get reader settings from user'''
-		host 		= str("%s" % self.wispApp.ipAddress.toPlainText())
+		host 		= str("%s" % self.wispApp.ipAddress.currentText())
 		modtari 	= str("%s" % self.wispApp.modSelect.currentText())
 		modtari 	= modtari.split(" : ") 
 		modulation 	= str(modtari[0])
@@ -39,7 +41,7 @@ class Reader(threading.Thread):
 		settings = {'modulation' : modulation,
 					'tari'		 : tari,
 					'port'		 : llrp.LLRP_PORT, 
-					'time'		 : float(80),
+					'time'		 : None,
 					'debug'		 : True, 
 					'every_n'	 : 1,
 					'reconnect'  : True,
@@ -102,6 +104,8 @@ class Reader(threading.Thread):
 								tx_power 			 = args['tx_power'],
 								modulation 			 = args['modulation'],
 								tari 				 = args['tari'],
+								session 			 = 2,
+								tag_population 		 = 4,
 								start_inventory 	 = True,
 								disconnect_when_done = False,
 								reconnect 			 = args['reconnect'],
@@ -120,6 +124,6 @@ class Reader(threading.Thread):
 
 		#self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
 		self.factory.addTagReportCallback(self.tagReportCallback)
-		reactor.connectTCP(args['host'], args['port'], self.factory)
+		reactor.connectTCP(args['host'], args['port'], self.factory, timeout=3)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()

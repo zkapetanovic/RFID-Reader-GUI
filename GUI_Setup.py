@@ -120,11 +120,12 @@ class GUI_Setup(QtGui.QMainWindow):
 		## Select Host ##
 		self.ipLabel = QtGui.QLabel("    Host IP:    ", self)
 		self.ipLabel.setFont(QFont('Arial', 10))
-		self.ipAddress = QtGui.QTextEdit(self)
+		self.ipAddress = QtGui.QComboBox(self)
 		self.ipAddress.setFixedHeight(20)
 		self.ipAddress.setFixedWidth(150)
 		self.ipAddress.setFont(QFont('Arial', 10))
-		self.ipAddress.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+		self.ipAddress.addItem('169.254.128.56')
+		self.ipAddress.addItem('169.254.115.176')
 		
 		## Connect to reader ##
 		self.connectButton = QtGui.QPushButton("Connect", self)
