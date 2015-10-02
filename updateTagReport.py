@@ -12,7 +12,6 @@ import time
 from skimage import exposure
 class UpdateTagReport:
 	def __init__(self, saturnThread, wispApp):
-
 		#Entry
 		self.idEntry 	  = {}
 		self.entry 		  = ()
@@ -231,7 +230,7 @@ class UpdateTagReport:
 		self.updateEntry()
 		#print self.currSeq, self. index
 		if self.currSeq == 255 or self.index >= 25199:
-			#self.wispApp.statusLabel.setText("Status: Image captured")
+			#self.wispApp.statusLabel.setText("Status: Data received")
 			self.configureImage(self.imArray)
 			self.sequence, self.currSeq, self.prevSeq, self.count = 0, 0, 0, 0
 			return
@@ -247,10 +246,14 @@ class UpdateTagReport:
 		#	print i
 		self.mat_image = np.reshape(imArray, (rows, columns)) / 255.0
 		self.mat_image = exposure.equalize_hist(self.mat_image)
+		#self.wispApp.statusLabel.setText("Status: Data received")
 		self.imageReady = True
 
 	def updateImage(self):
 		return self.mat_image, self.imageReady
+
+	#def clearImArray(self):
+	#	self.imArray = [128 for x in range(25200)]
 
 	def updateTagReport(self):
 		return self.tagType, self.wispID

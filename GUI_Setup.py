@@ -30,6 +30,7 @@ class GUI_Setup(QtGui.QMainWindow):
 
 		#### Buttons ####
 		self.startButton = QtGui.QPushButton('Start', self)
+		self.startButton.setFlat(False)
 		self.startButton.setObjectName("Start")
 		self.startButton.setGeometry(30, 500, 100, 30)
 
@@ -102,6 +103,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.readerSelect.setFont(QFont('Arial', 10))
 		self.readerSelect.addItem('Impinj')
 		self.readerSelect.addItem('USRP')
+		self.readerSelect.setCurrentIndex(0);
 
 		## Select Modulation and Tari ##
 		self.modLabel = QtGui.QLabel("    Reader Settings:        ")
@@ -116,6 +118,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.modSelect.addItem('M4 : 25000')
 		self.modSelect.addItem('WISP5pre : 12500')
 		self.modSelect.addItem('WISP5 : 7140')
+		self.modSelect.setCurrentIndex(1);
 
 		## Select Host ##
 		self.ipLabel = QtGui.QLabel("    Host IP:    ", self)
@@ -124,8 +127,8 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.ipAddress.setFixedHeight(20)
 		self.ipAddress.setFixedWidth(150)
 		self.ipAddress.setFont(QFont('Arial', 10))
-		self.ipAddress.addItem('169.254.128.56')
-		self.ipAddress.addItem('169.254.115.176')
+		self.ipAddress.addItem('192.168.1.4')
+		self.ipAddress.setCurrentIndex(0);
 		
 		## Connect to reader ##
 		self.connectButton = QtGui.QPushButton("Connect", self)
@@ -233,8 +236,11 @@ class GUI_Setup(QtGui.QMainWindow):
 
 		########## Stylesheet ##########
 		Stylesheet = """
-		QMainWindow {border: 2px solid #262323;}
 		QPushButton {border: 1px solid black; border-radius: 6px;}
+		QPushButton:pressed {
+		background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                          stop: 0 #dadbde, stop: 1 #f6f7fa);
+		}
 		QPushButton#Stop {border: 1px solid red; border-radius: 6px;}
 		QPushButton#Start {border: 1px solid #5BD463; border-radius: 6px;}
 		QTabWidget:pane{border: 1px sp;od #C2C7CB;}

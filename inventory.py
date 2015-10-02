@@ -42,11 +42,11 @@ class Reader(threading.Thread):
 					'tari'		 : tari,
 					'port'		 : llrp.LLRP_PORT, 
 					'time'		 : None,
-					'debug'		 : True, 
+					'debug'		 : False, 
 					'every_n'	 : 1,
 					'reconnect'  : True,
 					'logfile' 	 : 'logfile.log',
-					'tx_power' 	 : 61, 
+					'tx_power' 	 : 0, 
 					'antennas'	 : '1', 
 					'host'	 	 : host
 					}
@@ -73,7 +73,9 @@ class Reader(threading.Thread):
 				snr 		  = "N/A"
 
 				self.readData = 0
-				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))			
+				
+
+				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))			
 				self.tagReport.getData(epc, rssi, snr, time, self.readData)
 
 
@@ -104,10 +106,8 @@ class Reader(threading.Thread):
 								tx_power 			 = args['tx_power'],
 								modulation 			 = args['modulation'],
 								tari 				 = args['tari'],
-								session 			 = 2,
-								tag_population 		 = 4,
 								start_inventory 	 = True,
-								disconnect_when_done = False,
+								disconnect_when_done = (args['time'] > 0),
 								reconnect 			 = args['reconnect'],
 								tag_content_selector = {
 									'EnableROSpecID' 				 : True,
@@ -127,3 +127,4 @@ class Reader(threading.Thread):
 		reactor.connectTCP(args['host'], args['port'], self.factory, timeout=3)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()
+

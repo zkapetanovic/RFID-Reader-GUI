@@ -27,19 +27,21 @@ from saturn import SaturnDemo
 class RFID_Reader_App:
 	def __init__(self, xcorr = 0.87, ycorr = 0.886, zcorr = 1.034):
 
-		self.xcorr = xcorr
+		#saturn demo config
+		self.xcorr = xcorr		
 		self.zcorr = zcorr
 		self.ycorr = ycorr
-
 		self.saturnThread = SaturnDemo()
+
+		#inventory config
 		self.tagReport = UpdateTagReport(self.saturnThread, wispApp)
 		self.impinjThread = Reader(self.tagReport, wispApp)
-
 		self.usrpStart = False
 		self.impinjStart = False
 		self.runStarted = 0
 		self.pause = 0
 
+		#connect all widgets
 		wispApp.startButton.clicked.connect(self.start)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
@@ -48,27 +50,25 @@ class RFID_Reader_App:
 		wispApp.clearButton.clicked.connect(self.clearImage)
 		wispApp.caliButton.clicked.connect(self.calibrate)
 
-
+	#Select a reader
 	def readerSelect(self):
 		if wispApp.readerSelect.currentText() == "Impinj":
 			self.impinjStart = True
 			host, modulation, tari = self.getReaderConfig()
-			if modulation == "Modulation":
-				modulation = 'WISP5'
-				tari = 25000
 			print str("Reader: ") + str("Impinj, ") + str("Host: ") + str(host)
 			print str("Modulation: ") + str(modulation) + (" Tari: ") + str(tari)
 		elif wispApp.readerSelect.currentText() == "USRP":
 			self.usrpStart = True
 			print str("Reader: ") + str("USRP, ") + str("Host: ") + str("N/A")
 
+	#Get reader settings from user
 	def getReaderConfig(self):
 		host = str("%s" % wispApp.ipAddress.currentText())
 		settings = str("%s" % wispApp.modSelect.currentText())
 		settings = settings.split(" : ")
 		return host, settings[0], settings[1]
 
-
+	#Start inventory
 	def start(self):
 		if self.runStarted == 0:
 			self.runStarted = 1
@@ -80,22 +80,21 @@ class RFID_Reader_App:
 			self.timer.start(100)
 			self.initReader()
 
-		if self.pause == 1:
+		else:
 			self.impinjThread.factory.resumeInventory()
 			self.pause = 0
 
-
+	#Stop inventory, terminate reactor
 	def stop(self):
 		self.impinjThread.impinj.stop()
 		self.timer.stop()
 
+	#Pause inventory
 	def pauseRun(self):
 		self.impinjThread.factory.pauseInventory()
-		self.pause = 1
+		self.pause = 1		
 
-	def clearImage(self):
-		pass		
-
+	#Calibrate saturn
 	def calibrate(self):
 		accelX, accelY, accelZ = self.tagReport.updateAccel()
 		self.xcorr = 50.0 / (accelX / self.xcorr)
@@ -104,28 +103,28 @@ class RFID_Reader_App:
 		
 		self.tagReport.quickAccelCorrection(self.xcorr, self.ycorr, self.zcorr)
 
+	#Start reader
 	def initReader(self):
 		if self.impinjStart == True:
 			self.impinjThread.daemon = True
-			wispApp.statusLabel.setText("<b>Status</b>: Charging")
 			self.impinjThread.start()
 		elif self.usrpStart == True:
 			global usrp_tb
 			self.usrp_tb = my_top_block()
 			self.usrp_tb.start()
 
-
+	#Start saturn demo
 	def initSaturn(self):
 		self.saturnThread.daemon = True
 		self.saturnThread.start()
 
 
-	############### Update GUI ##############
+	#Update table
 	def updateGUI(self):
 		data, idEntry, newRow, entryCount = self.tagReport.updateEntry()
 		tagType, wispID = self.tagReport.updateTagReport()
 		lastRow = wispApp.mainTable.rowCount()
-
+		wispApp.statusLabel.setText("<b>Status</b>: Charging")
 		if wispID != None:
 			wispApp.mainTable.setRowCount(newRow)
 			wispApp.mainTable.resizeColumnsToContents()
@@ -142,10 +141,11 @@ class RFID_Reader_App:
 					item = QtGui.QTableWidgetItem(str(data[entryCount - 1][fieldPos]))
 					wispApp.mainTable.setItem(currentValue, fieldPos, item)
 
-	
+	#Update temperature data
 	def updateTemp(self):
-		tagType, plotData = self.tagReport.updateTemp()
+		tagType, plotData = self.tagReport.updateTemp()	#get tag type and wisp id
 
+		#if tag type is correct, update the temperature graph
 		if tagType == "0F" or tagType == "0E":
 			plt.clf()
 			plt.grid(True)
@@ -155,12 +155,13 @@ class RFID_Reader_App:
 			plt.ylim(-300, 100)
 			wispApp.canvas.draw()
 
-
+	#Update accelerometer data
 	def updateAccel(self):
-		tagType, wispID = self.tagReport.updateTagReport()
-		accelX, accelY, accelZ = self.tagReport.updateAccel()
+		tagType, wispID = self.tagReport.updateTagReport()			#get tag type and wisp id
+		accelX, accelY, accelZ = self.tagReport.updateAccel()		#get accel data
 		
-		if tagType == "0B" or tagType == "0D":
+		#if the tag type is correct, update the sliders
+		if tagType == "0B" or tagType == "0D":						
 			wispApp.xAccel.setText(" X '%' Tilt: " + "\n" + '%6.2f%%' % accelX)
 			wispApp.yAccel.setText(" Y '%' Tilt: " + "\n" + '%6.2f%%' % accelY)
 			wispApp.zAccel.setText(" Z '%' Tilt: " + "\n" + '%6.2f%%' % accelZ)
@@ -169,23 +170,28 @@ class RFID_Reader_App:
 			wispApp.sliderX.setValue(accelX)
 			wispApp.sliderZ.setValue(accelZ)
 
-
+	#Display new image
 	def captureImage(self):
 		tagType, wispID = self.tagReport.updateTagReport()
 		
 		if tagType == "CA":
 			currImage, imageReady = self.tagReport.updateImage()
 			if imageReady == True:
-				plt.cla()
-				plt.clf()
-				plt.gray()		
+				plt.cla()	#clear plot
+				plt.clf()	#clear plot
+				plt.gray()	#set to grayscale
 					
-				image = wispApp.image.add_subplot(111)
-				image.clear()
-				ax = wispApp.image.gca()
-				ax.set_axis_off()
-				image.imshow(currImage)
-				wispApp.imageCanvas.draw()
+				image = wispApp.image.add_subplot(111) 	#create plot
+				image.clear()							#clear image
+				ax = wispApp.image.gca()				#remove axis
+				ax.set_axis_off()						#remove axis
+				image.imshow(currImage)					#show image
+				wispApp.imageCanvas.draw()				#update gui
+
+	#Clear current image
+	def clearImage(self):
+		pass
+		#self.tagReport.clearImArray()
 
 	################ FOR READ CMD ################
 	def captureImageReadCMD(self):
