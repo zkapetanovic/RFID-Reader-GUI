@@ -43,9 +43,9 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.clearButton.setGeometry(250, 500, 100, 30)
 
 		#### Accelerometer ####
-		self.xAccel = QtGui.QLabel(self)
-		self.yAccel = QtGui.QLabel(self)
-		self.zAccel = QtGui.QLabel(self)
+		self.xAccel = QtGui.QLabel("X Tilt %",self)
+		self.yAccel = QtGui.QLabel("Y Tilt %",self)
+		self.zAccel = QtGui.QLabel("Z Tilt %",self)
 		
 		self.sliderY = QtGui.QSlider(QtCore.Qt.Vertical, self)
 		self.sliderX = QtGui.QSlider(QtCore.Qt.Horizontal, self)
@@ -53,29 +53,40 @@ class GUI_Setup(QtGui.QMainWindow):
 
 
 		########## Image Capture ##########
-		self.xVal = QtGui.QTextEdit(self)
-		self.xVal.setFixedWidth(100)
-		self.xVal.setFixedHeight(25)
-		self.xVal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+		#self.xVal = QtGui.QTextEdit(self)
+		#self.xVal.setFixedWidth(100)
+		#self.xVal.setFixedHeight(25)
+		#self.xVal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 		
-		self.yVal = QtGui.QTextEdit(self)
-		self.yVal.setFixedWidth(100)
-		self.yVal.setFixedHeight(25)
-		self.yVal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+		#self.yVal = QtGui.QTextEdit(self)
+		#self.yVal.setFixedWidth(100)
+		#self.yVal.setFixedHeight(25)
+		#self.yVal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 		
-		self.xLabel = QtGui.QLabel("    <b>X-Value</b> (0 - 255):       ")
-		self.yLabel = QtGui.QLabel("    <b>Y-Value</b> (0 - 255):       ")
-		self.statusLabel = QtGui.QLabel("<b>Status</b>: No Tag Seen")
+		#self.xLabel = QtGui.QLabel("    <b>X-Value</b> (0 - 255):       ")
+		#self.yLabel = QtGui.QLabel("    <b>Y-Value</b> (0 - 255):       ")
+		self.statusLabel = QtGui.QLabel("<b>Charge Status</b>:")
 		self.font = QtGui.QFont()
 		self.font.setPointSize(15)
 		self.statusLabel.setFont(self.font)
 
-		self.captureButton = QtGui.QPushButton("Enter Values")
-		self.captureButton.setFixedHeight(30)
-		self.captureButton.setFixedWidth(100)
+		self.chargePercentage = QtGui.QLabel("0%")
+		self.font = QtGui.QFont()
+		self.font.setPointSize(15)
+		self.statusLabel.setFont(self.font)
+
+		#self.captureButton = QtGui.QPushButton("Enter Values")
+		#self.captureButton.setFixedHeight(30)
+		#self.captureButton.setFixedWidth(100)
 
 		self.image = Figure()
 		self.imageCanvas = FigureCanvas(self.image)
+
+		self.progress = QtGui.QProgressBar(self)
+		self.progress.setRange(0, 100)
+		self.progress.setValue(0)
+		#self.progress.setFixedHeight(200)
+		#self.progress
 
 		############################### CONFIG TABS #############################
 
@@ -128,7 +139,8 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.ipAddress.setFixedWidth(150)
 		self.ipAddress.setFont(QFont('Arial', 10))
 		self.ipAddress.addItem('192.168.1.4')
-		self.ipAddress.setCurrentIndex(0);
+		self.ipAddress.addItem('192.168.10.100')
+		self.ipAddress.setCurrentIndex(0)
 		
 		## Connect to reader ##
 		self.connectButton = QtGui.QPushButton("Connect", self)
@@ -190,12 +202,14 @@ class GUI_Setup(QtGui.QMainWindow):
 		#Image Capture
 		self.imageLayout = QtGui.QGridLayout()
 		self.imageLayout.setHorizontalSpacing(30)
-		self.imageLayout.addWidget(self.xLabel, 1, 0)
-		self.imageLayout.addWidget(self.xVal, 1, 4)
-		self.imageLayout.addWidget(self.yLabel, 2, 0)
-		self.imageLayout.addWidget(self.yVal, 2, 4)
-		self.imageLayout.addWidget(self.statusLabel, 4, 0, 1,2)
-		self.imageLayout.addWidget(self.captureButton, 3, 4)
+		#self.imageLayout.addWidget(self.xLabel, 1, 0)
+		#self.imageLayout.addWidget(self.xVal, 1, 4)
+		#self.imageLayout.addWidget(self.yLabel, 2, 0)
+		#self.imageLayout.addWidget(self.yVal, 2, 4)
+		self.imageLayout.addWidget(self.progress, 1,2)
+		self.imageLayout.addWidget(self.statusLabel, 1, 0)
+		self.imageLayout.addWidget(self.chargePercentage,1,3)
+		#self.imageLayout.addWidget(self.captureButton, 3, 4)
 		self.imageLayout.addWidget(self.imageCanvas, 5, 0, 5, 5)
 		
 		#Temperature

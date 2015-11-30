@@ -7,9 +7,9 @@
 import sllurp.llrp as llrp
 import numpy as np
 import time
-
-
 from skimage import exposure
+
+
 class UpdateTagReport:
 	def __init__(self, saturnThread, wispApp):
 		#Entry
@@ -68,10 +68,14 @@ class UpdateTagReport:
 		self.saturnThread = saturnThread
 		self.wispApp 	  =  wispApp
 
+		### For testing purposes ###
+		self.data1 = 0
+
 	def getData(self, epc, rssi, snr, time, readData):
 		self.epc 			= epc	
 		self.tmp 			= "%02X" % int(epc[0:24], 16)
 		self.tagType 		= "%02X" % int(epc[0:2], 16)
+		self.charge 		= "%02X" % int(epc[4:6], 16)
 		self.hwVersion 		= "%02X" % int(epc[18:20], 16)
 		self.wispID	 		= "%02X" % int(epc[0:2], 16)
 		self.snr 			= snr
@@ -105,8 +109,10 @@ class UpdateTagReport:
 		#WISPCam
 		elif tagType == "CA": 
 			#self.saveData()
-			#if tag.readData != 0:
-			self.imageCaptureEPC() 
+			if int(self.epc[2:4], 16) != 254:
+				self.imageCaptureEPC() 
+			else:
+				self.camCharge()
 			#else:
 			#	self.updateEntry()
 
@@ -123,9 +129,9 @@ class UpdateTagReport:
 	def getAccel(self, epc, tagType):
 		alpha = 0.9
 
-		x = int(epc[6:10], 16)
-		y = int(epc[2:6], 16)
-		z = int(epc[10:14], 16)
+		x = int(epc[8:10], 16)
+		y = int(epc[4:6], 16)
+		z = int(epc[12:14], 16)
 
 		if x < 0 or x > 1024: x = 0
 		if y < 0 or y > 1024: y = 0
@@ -207,10 +213,11 @@ class UpdateTagReport:
 			tag.wordPtr = tag.wordPtr + 15
 			print (tag.index)
 
-		self.updateEntry()
-			
+		self.updateEntry()		
+
 	def imageCaptureEPC(self):
-		self.wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
+		#self.test()
+		self.wispApp.statusLabel.setText("<b>Status</b>: Transmitting")
 		self.sensorData = int(self.epc[2:24], 16)
 		self.prevSeq = self.currSeq
 		self.currSeq = int(self.epc[2:4], 16)
@@ -228,12 +235,41 @@ class UpdateTagReport:
 
 			if x == 9: x = 0
 		self.updateEntry()
-		#print self.currSeq, self. index
+		
+		if self.index % 175 == 0:
+			self.configureImage(self.imArray)
+			return
+
 		if self.currSeq == 255 or self.index >= 25199:
 			#self.wispApp.statusLabel.setText("Status: Data received")
 			self.configureImage(self.imArray)
 			self.sequence, self.currSeq, self.prevSeq, self.count = 0, 0, 0, 0
+
 			return
+
+	def imageFinished(self):
+		#if self.currSeq == 255 or self.index >= 25199:
+		#	return True
+		return True
+
+	def getWriteData(self):
+		wordPtr = 0
+		MB = 0
+		if self.data1 == 0:
+			writeData = '\x00\x00\x00\x00'
+			self.data1 = 1
+		if self.data1 == 1:
+			writeData = '\xFF\xFF\xFF\xFF'
+			self.data1 = 0
+
+		return wordPtr, MB, writeData
+
+	def camCharge(self):
+		x = int(self.epc[4:8],16)
+		voltage = (x*4000)/1024;
+		percentage = (((voltage*100)/3800)*100)/102;
+		self.wispApp.progress.setValue(percentage)
+		self.wispApp.chargePercentage.setText(str(percentage) + "%")
 
 	def configureImage(self, imArray):
 		rows, columns = 144, 175
@@ -246,14 +282,10 @@ class UpdateTagReport:
 		#	print i
 		self.mat_image = np.reshape(imArray, (rows, columns)) / 255.0
 		self.mat_image = exposure.equalize_hist(self.mat_image)
-		#self.wispApp.statusLabel.setText("Status: Data received")
 		self.imageReady = True
 
 	def updateImage(self):
-		return self.mat_image, self.imageReady
-
-	#def clearImArray(self):
-	#	self.imArray = [128 for x in range(25200)]
+		return self.mat_image, self.imageReady, self.index
 
 	def updateTagReport(self):
 		return self.tagType, self.wispID

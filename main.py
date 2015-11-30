@@ -3,23 +3,23 @@
  Created on Thursday July, 10, 2014
  @author Zerina Kapetanovic
 """
+import sys, threading, time
+import pkg_resources
+
 ### GUI ###
 from PyQt4 import QtGui, Qt, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import numpy as np
 
 ### GRAPHING ###
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-import sys, threading, time
-import pkg_resources
+import numpy as np
 
 ### MODULES ###
 from GUI_Setup import GUI_Setup
-from inventory import Reader
+from inventory_x1 import Reader
 from updateTagReport import UpdateTagReport
 from saturn import SaturnDemo
 
@@ -45,7 +45,7 @@ class RFID_Reader_App:
 		wispApp.startButton.clicked.connect(self.start)
 		wispApp.connectButton.clicked.connect(self.readerSelect)
 		wispApp.saturnButton.clicked.connect(self.initSaturn)
-		wispApp.captureButton.clicked.connect(self.captureImage)
+		#wispApp.captureButton.clicked.connect(self.captureImage)
 		wispApp.pauseButton.clicked.connect(self.pauseRun)
 		wispApp.clearButton.clicked.connect(self.clearImage)
 		wispApp.caliButton.clicked.connect(self.calibrate)
@@ -175,7 +175,7 @@ class RFID_Reader_App:
 		tagType, wispID = self.tagReport.updateTagReport()
 		
 		if tagType == "CA":
-			currImage, imageReady = self.tagReport.updateImage()
+			currImage, imageReady, index = self.tagReport.updateImage()
 			if imageReady == True:
 				plt.cla()	#clear plot
 				plt.clf()	#clear plot
@@ -187,11 +187,12 @@ class RFID_Reader_App:
 				ax.set_axis_off()						#remove axis
 				image.imshow(currImage)					#show image
 				wispApp.imageCanvas.draw()				#update gui
+				
 
 	#Clear current image
 	def clearImage(self):
-		pass
-		#self.tagReport.clearImArray()
+		self.tagReport.imageArray = [128 for x in range(25200)]
+		
 
 	################ FOR READ CMD ################
 	def captureImageReadCMD(self):

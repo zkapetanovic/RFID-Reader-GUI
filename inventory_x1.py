@@ -13,6 +13,8 @@ from sllurp.llrp_proto import LLRPROSpec, Modulation_Name2Type, DEFAULT_MODULATI
 from updateTagReport import UpdateTagReport
 
 tagsSeen = 0
+global_stop_param = {'AccessSpecStopTriggerType': 1, 'OperationCountValue': int(1)}
+
 logger = logging.getLogger('sllurp')
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.FileHandler('logfile.log'))
@@ -26,6 +28,7 @@ class Reader(threading.Thread):
 		self.tagReport 	= tagReport
 		self.wispApp 	= wispApp
 		self.readData 	= 0
+		self.finishedAccess = False;
 
 	def run(self):
 		self.initReader() 
@@ -72,28 +75,55 @@ class Reader(threading.Thread):
 				time 		  = tag['LastSeenTimestampUTC'][0]
 				snr 		  = "N/A"
 
-				self.readData = 0
-				
+				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))	
 
-				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))			
+				if self.tagReport.imageFinished() and self.finishedAccess:
+					try:
+						print("trying")
+						self.sendNextWrite()
+					except:
+						logger.info("Error in nextAccess")
+						continue
+
+					#try:
+					#	self.sendNextWrite()	
+					#except: 
+					#	print("Failed DISABLE_ACCESSSPEC")
+					#	continue
+
 				self.tagReport.getData(epc, rssi, snr, time, self.readData)
 
 
 	def access (self, proto):
 		'''Function to configure read and write parameters'''
-		readSpecParam = None
-		readSpecParam = {
+		wordPtr, MB, wordData = self.tagReport.getWriteData();
+		writeSpecParam = None
+		writeSpecParam = {
 	        'OpSpecID': 0,
-	        'MB': 0, 					
-	        'WordPtr': globals.wordPtr, 
+	        'MB': MB, 					
+	        'WordPtr': wordPtr, 
 	        'AccessPassword': 0,
-	        'WordCount': 15 
+	        'WriteDataWordCount': 1,
+	        'WriteData': '\x01\x01' #write random data to initialize AccessSpec
 	        }
 	    
-		proto.startAccess(readWords = readSpecParam) #removed return
-	    #tag.retreive = 0
+		proto.startAccess(readWords = None, writeWords = writeSpecParam, accessStopParam = global_stop_param) #removed return
+		self.finishedAccess = True
 	    #return proto.startAccess(readWords=readSpecParam)
 
+	def sendNextWrite(self):
+		wordPtr, MB, writeData = self.tagReport.getWriteData();
+		writeSpecParam = None
+		writeSpecParam = {
+	        'OpSpecID': 0,
+	        'MB': MB, 					
+	        'WordPtr': wordPtr, 
+	        'AccessPassword': 0,
+	        'WriteDataWordCount': 3,
+	        'WriteData': writeData
+	        }
+		self.factory.nextAccess(readParam = None, writeParam = writeSpecParam, stopParam = global_stop_param)
+	    
 
 	def initReader(self):
 		args = self.readerConfig()
@@ -122,8 +152,9 @@ class Reader(threading.Thread):
 									'EnableAccessSpecID' 			 : True 
 									})
 
-		#self.factory.addStateCallback(llrp.LLRPClient.STATE_SENT_DELETE_ACCESSSPEC, self.access)
+		
 		self.factory.addTagReportCallback(self.tagReportCallback)
+		self.factory.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, self.access)
 		reactor.connectTCP(args['host'], args['port'], self.factory, timeout=3)
 		reactor.addSystemEventTrigger('before', 'shutdown', self.politeShutdown, self.factory)
 		reactor.run()
