@@ -19,7 +19,7 @@ import numpy as np
 
 ### MODULES ###
 from GUI_Setup import GUI_Setup
-from inventory_x1 import Reader
+from inventory import Reader
 from updateTagReport import UpdateTagReport
 from saturn import SaturnDemo
 
@@ -140,6 +140,10 @@ class RFID_Reader_App:
 				if currentValue in values:
 					item = QtGui.QTableWidgetItem(str(data[entryCount - 1][fieldPos]))
 					wispApp.mainTable.setItem(currentValue, fieldPos, item)
+	def updateProgressBar(self):
+		percentage = self.tagReport.getCamProgress()
+		wispApp.progress.setValue(percentage)
+		wispApp.chargePercentage.setText(str(percentage) + "%")
 
 	#Update temperature data
 	def updateTemp(self):

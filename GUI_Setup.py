@@ -138,7 +138,7 @@ class GUI_Setup(QtGui.QMainWindow):
 		self.ipAddress.setFixedHeight(20)
 		self.ipAddress.setFixedWidth(150)
 		self.ipAddress.setFont(QFont('Arial', 10))
-		self.ipAddress.addItem('192.168.1.4')
+		self.ipAddress.addItem('192.168.1.3')
 		self.ipAddress.addItem('192.168.10.100')
 		self.ipAddress.setCurrentIndex(0)
 		

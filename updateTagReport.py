@@ -113,8 +113,6 @@ class UpdateTagReport:
 				self.imageCaptureEPC() 
 			else:
 				self.camCharge()
-			#else:
-			#	self.updateEntry()
 
 		else: 
 			self.sensorData = None
@@ -216,8 +214,8 @@ class UpdateTagReport:
 		self.updateEntry()		
 
 	def imageCaptureEPC(self):
-		#self.test()
 		self.wispApp.statusLabel.setText("<b>Status</b>: Transmitting")
+		self.getCamProgress()
 		self.sensorData = int(self.epc[2:24], 16)
 		self.prevSeq = self.currSeq
 		self.currSeq = int(self.epc[2:4], 16)
@@ -264,12 +262,14 @@ class UpdateTagReport:
 
 		return wordPtr, MB, writeData
 
-	def camCharge(self):
+	def getCamProgress(self):
 		x = int(self.epc[4:8],16)
 		voltage = (x*4000)/1024;
 		percentage = (((voltage*100)/3800)*100)/102;
-		self.wispApp.progress.setValue(percentage)
-		self.wispApp.chargePercentage.setText(str(percentage) + "%")
+		return percentage
+		#self.wispApp.progress.setValue(percentage)
+		#self.emit(QtCore.SIGNAL("updateProgressBar(int)"), percentage)
+		#self.wispApp.chargePercentage.setText(str(percentage) + "%")
 
 	def configureImage(self, imArray):
 		rows, columns = 144, 175
