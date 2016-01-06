@@ -77,7 +77,7 @@ class RFID_Reader_App:
 			self.timer.timeout.connect(self.captureImage)
 			self.timer.timeout.connect(self.updateTemp)
 			self.timer.timeout.connect(self.updateAccel)
-			self.timer.start(100)
+			self.timer.start(70)
 			self.initReader()
 
 		else:
@@ -143,6 +143,7 @@ class RFID_Reader_App:
 	def updateProgressBar(self):
 		percentage = self.tagReport.getCamProgress()
 		wispApp.progress.setValue(percentage)
+		wispApp.chargePercentage.setText(str(percentage) + "%")
 
 	#Update temperature data
 	def updateTemp(self):
@@ -195,37 +196,8 @@ class RFID_Reader_App:
 	#Clear current image
 	def clearImage(self):
 		self.tagReport.imageArray = [128 for x in range(25200)]
-		
-
-	################ FOR READ CMD ################
-	def captureImageReadCMD(self):
-		tag.x = str("%s" % wispApp.xVal.toPlainText())
-		tag.y = str("%s" % wispApp.yVal.toPlainText())
-		if tag.tagType == "CA":
-			wispApp.statusLabel.setText("<b>Status</b>: Transmitting data")
-			rows 	= 144
-			columns = 175
-
-			tag.x = 60
-			tag.y = 0
-			if tag.index >= 25200 or tag.wordPtr >= 12600:	
-				wispApp.statusLabel.setText("Status: Image captured")
-				print ("TEST")
-				for i in tag.imArray:
-					i = i * 20
-					print i
-				plt.cla()
-				plt.clf()
-				mat_image = np.reshape(tag.imArray, (rows, columns)) / 255.0
-				plt.gray()			
-				self.image = wispApp.image.add_subplot(111)
-				self.image.clear()
-				ax = wispApp.image.gca()
-				ax.set_axis_off()
-				print ("TEST1")
-				self.image.imshow(mat_image)
-				wispApp.imageCanvas.draw()
-				tag.index, tag.wordPtr = 0, 0
+		plt.cla()
+		plt.clf()
 
 
 def main():

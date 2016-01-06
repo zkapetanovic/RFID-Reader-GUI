@@ -27,7 +27,6 @@ class Reader(threading.Thread):
 		self.impinj 	= impinj
 		self.tagReport 	= tagReport
 		self.wispApp 	= wispApp
-		self.readData 	= 0
 		self.finishedAccess = False;
 
 	def run(self):
@@ -75,15 +74,12 @@ class Reader(threading.Thread):
 				time 		  = tag['LastSeenTimestampUTC'][0]
 				snr 		  = "N/A"
 
-				#logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))	
+				logger.info('Saw Tag(s): {}'.format(pprint.pformat(tags)))	
 
 				if self.tagReport.imageFinished() and self.finishedAccess:
-					try:
-						print("trying")
-						self.sendNextWrite()
-					except:
-						logger.info("Error in nextAccess")
-						continue
+
+					self.sendNextWrite()
+
 
 					#try:
 					#	self.sendNextWrite()	
@@ -91,36 +87,34 @@ class Reader(threading.Thread):
 					#	print("Failed DISABLE_ACCESSSPEC")
 					#	continue
 
-				self.tagReport.getData(epc, rssi, snr, time, self.readData)
+				self.tagReport.getData(epc, rssi, snr, time)
 
 
 	def access (self, proto):
 		'''Function to configure read and write parameters'''
-		wordPtr, MB, wordData = self.tagReport.getWriteData();
 		writeSpecParam = None
 		writeSpecParam = {
 	        'OpSpecID': 0,
-	        'MB': MB, 					
-	        'WordPtr': wordPtr, 
+	        'MB': 0, 					
+	        'WordPtr': 0, 
 	        'AccessPassword': 0,
 	        'WriteDataWordCount': 1,
 	        'WriteData': '\x01\x01' #write random data to initialize AccessSpec
 	        }
 	    
-		proto.startAccess(readWords = None, writeWords = writeSpecParam, accessStopParam = global_stop_param) #removed return
+		proto.startAccess(readWords = None, writeWords = writeSpecParam, accessStopParam = global_stop_param)
 		self.finishedAccess = True
-	    #return proto.startAccess(readWords=readSpecParam)
-
+		
 	def sendNextWrite(self):
-		wordPtr, MB, writeData = self.tagReport.getWriteData();
+		writeData = self.tagReport.getWriteData();
 		writeSpecParam = None
 		writeSpecParam = {
-	        'OpSpecID': 0,
-	        'MB': MB, 					
-	        'WordPtr': wordPtr, 
-	        'AccessPassword': 0,
-	        'WriteDataWordCount': 3,
-	        'WriteData': writeData
+			'OpSpecID': 0,
+			'MB': 3, 					
+			'WordPtr': 0, 
+			'AccessPassword': 0,
+			'WriteDataWordCount': 2,
+			'WriteData': writeData
 	        }
 		self.factory.nextAccess(readParam = None, writeParam = writeSpecParam, stopParam = global_stop_param)
 	    
@@ -130,27 +124,27 @@ class Reader(threading.Thread):
 		enabled_antennas = map(lambda x: int(x.strip()), args['antennas'].split(','))
 
 		self.factory = llrp.LLRPClientFactory(
-								duration			 = args['time'],
-								report_every_n_tags  = args['every_n'],
-								antennas 			 = enabled_antennas,
-								tx_power 			 = args['tx_power'],
-								modulation 			 = args['modulation'],
-								tari 				 = args['tari'],
-								start_inventory 	 = True,
-								disconnect_when_done = (args['time'] > 0),
-								reconnect 			 = args['reconnect'],
-								tag_content_selector = {
-									'EnableROSpecID' 				 : True,
-									'EnableSpecIndex' 				 : True,
-									'EnableInventoryParameterSpecID' : True,
-									'EnableAntennaID' 				 : True,
-									'EnableChannelIndex' 			 : False,
-									'EnablePeakRRSI' 				 : True,
-									'EnableFirstSeenTimestamp' 		 : False,
-									'EnableLastSeenTimestamp' 		 : True,
-									'EnableTagSeenCount' 			 : True,
-									'EnableAccessSpecID' 			 : True 
-									})
+			duration			 = args['time'],
+			report_every_n_tags  = args['every_n'],
+			antennas 			 = enabled_antennas,
+			tx_power 			 = args['tx_power'],
+			modulation 			 = args['modulation'],
+			tari 				 = args['tari'],
+			start_inventory 	 = True,
+			disconnect_when_done = (args['time'] > 0),
+			reconnect 			 = args['reconnect'],
+			tag_content_selector = {
+				'EnableROSpecID' 				 : True,
+				'EnableSpecIndex' 				 : True,
+				'EnableInventoryParameterSpecID' : True,
+				'EnableAntennaID' 				 : True,
+				'EnableChannelIndex' 			 : False,
+				'EnablePeakRRSI' 				 : True,
+				'EnableFirstSeenTimestamp' 		 : False,
+				'EnableLastSeenTimestamp' 		 : True,
+				'EnableTagSeenCount' 			 : True,
+				'EnableAccessSpecID' 			 : True 
+				})
 
 		
 		self.factory.addTagReportCallback(self.tagReportCallback)
