@@ -8,17 +8,19 @@ import sllurp.llrp as llrp
 import numpy as np
 import time
 from skimage import exposure
-import struct
+import cv2
+import cv2.cv as cv
+
 
 class UpdateTagReport:
 	def __init__(self, saturnThread, wispApp):
 		#Entry
 		self.idEntry 	  = {}
-		self.entry        = ()
-		self.data 	  = []
+		self.entry 		  = ()
+		self.data 		  = []
 		self.entryCount	  = 0
 		self.sensorData   = None
-		self.newRow	  = 0
+		self.newRow		  = 0
 
 		#Accel
 		self.currentX 	  = 1
@@ -42,40 +44,47 @@ class UpdateTagReport:
 		self.epc 		  = None
 
 		#Temp
-		self.tempValue	   = None
-		self.plotData	   = []
+		self.tempValue	  = None
+		self.plotData	  = []
 
 		#WISPCam
-		self.x 		   = 0
-		self.y  	   = 50
-		self.finished 	   = 0
-		self.prevSeq 	   = 0 	
-		self.sequence 	   = 0 			
-		self.index 	   = 0
-		self.retrieve 	   = 0
-		self.readData 	   = 0
-		self.wordPtr	   = 0
-		self.mat_image 	   = None
-		self.imageReady    = False
-		self.imArray	   = [128 for x in range(25200)]
-		self.missingPixels = []
-		self.pixel 	   = 0
+		self.x 			  = 0
+		self.y  		  = 50
+		self.currSeq 	  = 0
+		self.prevSeq 	  = 0 					#previous EPC sequence
+		self.sequence 	  = 0 					#counter for the number of EPC sequences
+		self.index 		  = 0
+		self.dataCount 	  = 0
+		self.camTag 	  = 0
+		self.packetCount  = 0
+		self.epcPacket 	  = 0
+		self.getPacket	  = []
+		self.retrieve 	  = 0
+		self.readData 	  = 0
+		self.wordPtr	  = 0
+		self.mat_image 	  = None
+		self.imageReady   = False
+		self.imArray	  = [128 for x in range(25200)]
+		self.imgFace 	  = [128 for x in range(19200)]
 
 		#Threads
-		self.saturnThread  = saturnThread
-		self.wispApp 	   =  wispApp
+		self.saturnThread = saturnThread
+		self.wispApp 	  =  wispApp
 
+		### For testing purposes ###
+		self.data1 = 0
 
-	def getData(self, epc, rssi, snr, time):
-		self.epc 		= epc	
-		self.tmp 		= "%02X" % int(epc[0:24], 16)
+	def getData(self, epc, rssi, snr, time, readData):
+		self.epc 			= epc	
+		self.tmp 			= "%02X" % int(epc[0:24], 16)
 		self.tagType 		= "%02X" % int(epc[0:2], 16)
 		self.charge 		= "%02X" % int(epc[4:6], 16)
 		self.hwVersion 		= "%02X" % int(epc[18:20], 16)
-		self.wispID	 	= "%02X" % int(epc[0:2], 16)
-		self.snr 		= snr
-		self.rssi 		= rssi
-		self.time 		= time	#microseconds
+		self.wispID	 		= "%02X" % int(epc[0:2], 16)
+		self.snr 			= snr
+		self.rssi 			= rssi
+		self.time 			= time	#microseconds
+		self.readData		= readData
 
 		if self.epc != None:
 			self.parseData(self.tagType, self.hwVersion, self.wispID, self.epc)
@@ -108,11 +117,17 @@ class UpdateTagReport:
 			else:
 				self.camCharge()
 
+		elif tagType == "DE":
+			if int(self.epc[2:4], 16) != 254:
+				self.imgFaceDetect()
+			else:
+				self.camCharge()
+
 		else: 
 			self.sensorData = None
 			self.updateEntry()
 
-	def saveImageData(self):
+	def saveData(self):
 		log = [[self.epx, self.time]]
 		fileHandle = open('camLog.txt', 'a')
 		np.savetxt(fileHandle, log, '%10s')
@@ -189,90 +204,153 @@ class UpdateTagReport:
 		return self.currentX, self.currentY, self.currentZ
 
 	def updateTemp(self):
-		return self.tagType, self.plotData	
+		return self.tagType, self.plotData
+
+	def imageCaptureReadCMD(self):
+ 		begin 	= 0
+ 		end 	= 2
+ 	
+	 	if tag.index < 25200 and tag.wordPtr < 12600:
+			for x in range(30): #32 bytes of data
+				tag.imArray[tag.index] = int(tag.readData[begin:end], 16)
+				begin = end
+				end = end + 2
+				tag.index = tag.index + 1
+			
+			tag.wordPtr = tag.wordPtr + 15
+			print (tag.index)
+
+		self.updateEntry()		
 
 	def imageCaptureEPC(self):
+		#self.test()
 		self.wispApp.statusLabel.setText("<b>Status</b>: Transmitting")
-		self.getCamProgress()
 		self.sensorData = int(self.epc[2:24], 16)
-		self.prevSeq = self.sequence
-		self.finished = int(self.epc[2:4], 16)
-		self.sequence = int(self.epc[2:6], 16)
-		self.index = 9*self.sequence + 9
+		self.prevSeq = self.currSeq
+		self.currSeq = int(self.epc[2:4], 16)
+		self.index = 10 * (200 * self.sequence + self.currSeq)
 
-		#### Get missing pixels ####
-		missing = self.sequence - self.prevSeq
-		i = 1
-		if missing >= 2:		
-			while i < missing:
-				p = self.prevSeq + i
-				self.missingPixels.append(p)
-				i += 1
-			
-		#### Append data to array ####
-		if self.finished != 255 or self.index <= 25199:
-			begin = 6
-			end = 8
-			for x in range(9):
-				try:
-					self.imArray[9*self.sequence + x] = int(self.epc[begin:end], 16)
-					begin = end
-					end = begin + 2
-				except:
-					print("Index error")
-					self.index = 25200
-					continue
-			if x == 8: x = 0
+		if self.currSeq < self.prevSeq: self.sequence += 1
+
+		if self.currSeq != 255 or self.index <= 25199:
+			begin = 4
+			end = 6
+			for x in range(10):
+				self.imArray[10 * (200 * self.sequence + self.currSeq) + x] = int(self.epc[begin:end], 16)
+				begin = end
+				end = begin + 2
+
+			if x == 9: x = 0
 		self.updateEntry()
 		
-		#### Did we get the last data set? ####
 		if self.index % 175 == 0:
 			self.configureImage(self.imArray)
-			self.sequence, self.prevSeq, self.count = 0, 0, 0
 			return
 
-		if self.finished == 255 or self.index >= 25199:
+		if self.currSeq == 255 or self.index >= 25199:
+			#self.wispApp.statusLabel.setText("Status: Data received")
 			self.configureImage(self.imArray)
-			self.sequence, self.prevSeq, self.count = 0, 0, 0
+			self.sequence, self.currSeq, self.prevSeq, self.count = 0, 0, 0, 0
+
 			return
+
+	def imgFaceDetect(self):
+		self.sensorData = int(self.epc[2:24], 16)
+		self.prevSeq = self.currSeq
+		self.currSeq = int(self.epc[2:4], 16)
+		self.index = 10 * (200 * self.sequence + self.currSeq)
+		rect = self.faceDetect()
+
+
+		if self.currSeq < self.prevSeq: self.sequence += 1
+
+		if self.currSeq != 255 or self.index <= 19199:
+			begin = 4
+			end = 6
+			for x in range(10):
+				self.imgFace[10 * (200 * self.sequence + self.currSeq) + x] = int(self.epc[begin:end], 16)
+				begin = end
+				end = begin + 2
+
+			if x == 9: x = 0
+		self.updateEntry()
+		
+		if self.index % 175 == 0:
+			self.configureImage(self.imArray)
+			return
+
+		if self.currSeq == 255 or self.index >= 19199:
+			#self.wispApp.statusLabel.setText("Status: Data received")
+			self.configureImage(self.imArray)
+			self.sequence, self.currSeq, self.prevSeq, self.count = 0, 0, 0, 0
+
+			return
+
 
 	def imageFinished(self):
-		if self.finished == 255 or self.index >= 25199:
-			return True
+		#if self.currSeq == 255 or self.index >= 25199:
+		#	return True
+		return True
 
 	def getWriteData(self):
-		self.missingPixels.append(10)
-		if self.pixel < len(self.missingPixels):
-			x = self.missingPixels[self.pixel]
-			y = hex(x).split('x')[1]
-			z = struct.pack('>I', x)
-			if self.missingPixels[self.pixel] < 16:
-				data = '\\' + 'x00' + '\\' + 'x0' + hex(x).split('x')[1]	
-			elif self.missingPixels[self.pixel] >= 16 and x < 256:
-				data = '\\' + 'x00' + '\\' + 'x' + hex(x).split('x')[1]
-			elif self.missingPixels[self.pixel] >= 256 and x < 4096:
-				data = '\\' + 'x0' + y[0] + '\\' + "x" + y[1:]
-			elif self.missingPixels[self.pixel] >= 4096:
-				data = '\\' + 'x' + y[0:2] + '\\' + 'x' + y[2:]
-			self.pixel = self.pixel + 1
-		print (data)
-		return z
+		wordPtr = 0
+		MB = 0
+		##### Dummy data #####
+		if self.data1 == 0:
+			writeData = '\x00\x00\x00\x00'
+			self.data1 = 1
+		if self.data1 == 1:
+			writeData = '\xFF\xFF\xFF\xFF'
+			self.data1 = 0
+
+		return wordPtr, MB, writeData
 
 	def getCamProgress(self):
 		x = int(self.epc[4:8],16)
 		voltage = (x*4000)/1024;
 		percentage = (((voltage*100)/3800)*100)/102;
 		return percentage
-		#self.wispApp.progress.setValue(percentage)
-		#self.emit(QtCore.SIGNAL("updateProgressBar(int)"), percentage)
-		#self.wispApp.progress.setValue(percentage)
-		#self.wispApp.chargePercentage.setText(str(percentage) + "%")
 
-	def configureImage(self, imArray):	
+	def configureImage(self, imArray):
 		rows, columns = 144, 175
+		x = 50
+		y = 0
 		self.mat_image = np.reshape(imArray, (rows, columns)) / 255.0
-		#self.mat_image = exposure.equalize_hist(self.mat_image)
+		self.mat_image = exposure.equalize_hist(self.mat_image)
 		self.imageReady = True
+		self.faceDetect(self.mat_image)
+
+	def faceDetect(self, img):
+		cascade = cv2.CascadeClassifier('')
+		rects = cascade.detectMultiScale(img, 
+										 scaleFactor 	= 1.3, 
+										 minNeighbors 	= 8, 
+										 minSize 		= (20,20), 
+										 flags 			= cv.CV_HAAR_SCALE_IMAGE)
+
+		if len(rects) == 0:
+			return = []
+		rects[:, 2] += rects[:, :2]
+		self.getWindow(rects)
+		return rects
+
+	def drawRects(self, img, rects, color):
+		for x1, y1, x2, y2 in rects:
+			cv2.rectangle(img, (x1, x2), (x2, y2), color, 2)
+			return img
+
+	def getWindow(self, rects):
+		for x1, y1, x2, y2 in rects:
+			d1 = abs(x2-x1)
+			d2 = abs(y2-y1)
+			window = d1*d2
+		self.imgFace = [128 for x in range(window)]
+
+	def writeRectCoord(self, rects):
+		rects = faceDetect()
+		for x1, y1, x2, y2 in rects:
+			coord = struct.pack(>IIII, x1, y1, x2, y2)			
+		return coord
 
 	def updateImage(self):
 		return self.mat_image, self.imageReady, self.index
@@ -285,5 +363,3 @@ class UpdateTagReport:
 		self.data.append(self.entry)
 		self.entryCount += 1
 		return self.data, self.idEntry, self.newRow, self.entryCount
-		
-		

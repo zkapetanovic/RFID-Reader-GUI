@@ -141,6 +141,7 @@ class RFID_Reader_App:
 				if currentValue in values:
 					item = QtGui.QTableWidgetItem(str(data[entryCount - 1][fieldPos]))
 					wispApp.mainTable.setItem(currentValue, fieldPos, item)
+					
 	def updateProgressBar(self):
 		percentage = self.tagReport.getCamProgress()
 		wispApp.progress.setValue(percentage)

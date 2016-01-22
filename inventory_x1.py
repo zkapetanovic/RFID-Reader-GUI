@@ -106,7 +106,8 @@ class Reader(threading.Thread):
 		self.finishedAccess = True
 		
 	def sendNextWrite(self):
-		writeData = self.tagReport.getWriteData();
+		#writeData = self.tagReport.getWriteData()
+		writeData = self.tagReport.writeRectCoor()
 		writeSpecParam = None
 		writeSpecParam = {
 			'OpSpecID': 0,
